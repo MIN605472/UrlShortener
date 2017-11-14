@@ -2,7 +2,7 @@
 
 This project is the template for the creation of projects. This project also will contain solutions for blocking issues.
 
-The __Demo__ extends the __Common__ project. The code of the project __Demo__ is in the package `urlshortener2014.demo`. It defines the class `UrlShortenerControllerWithLogs` that extends the `UrlShortenerController` provided by the __Core__ with log support for debugging. 
+The __Demo__ extends the __Common__ project. The code of the project __Demo__ is in the package `urlshortener2014.liquidmountain`. It defines the class `UrlShortenerControllerWithLogs` that extends the `UrlShortenerController` provided by the __Core__ with log support for debugging. 
 
 `Application` and `config` classes configure the __Demo__ application to use `UrlShortenerControllerWithLogs` as controller instead of `UrlShortenerController`.
 
