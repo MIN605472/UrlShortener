@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,6 +68,13 @@ public class UrlShortenerController {
 		HttpHeaders h = new HttpHeaders();
 		h.setLocation(URI.create(l.getTarget()));
 		return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
+	}
+
+	@RequestMapping(value = "/stats/{id:(?!link).*}", method = RequestMethod.GET)
+	public ResponseEntity<List<Click>> showStats(@PathVariable String id,
+												 HttpServletRequest request) {
+		HttpHeaders h = new HttpHeaders();
+		return new ResponseEntity<>(clickRepository.findByHash(id), h, HttpStatus.ACCEPTED);
 	}
 
 	@RequestMapping(value = "/link", method = RequestMethod.POST)
