@@ -4,7 +4,6 @@ eclipse {
    }
 }
 
-
 dependencies {
     compile project(':common')
 
