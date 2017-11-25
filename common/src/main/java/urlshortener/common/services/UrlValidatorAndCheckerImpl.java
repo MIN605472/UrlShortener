@@ -1,4 +1,4 @@
-package urlshortener.common.repository;
+package urlshortener.common.services;
 
 public class UrlValidatorAndCheckerImpl implements UrlValidatorAndChecker {
 
