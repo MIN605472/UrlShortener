@@ -21,7 +21,7 @@ public class GeolocationAPI {
                 .get();
         System.out.println("recibo " + response);
         GeoObject received = response.readEntity(GeoObject.class);
-        System.out.println("recibido " + received.city);
+        System.out.println("recibido " + received.country);
         return received.city;
     }
 }
