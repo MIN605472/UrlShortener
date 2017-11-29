@@ -23,10 +23,13 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.web.client.RestTemplate;
+import urlshortener.common.domain.GoogleSafeBrowsingConfig;
 import urlshortener.common.domain.ShortURL;
 import urlshortener.common.repository.ClickRepository;
 import urlshortener.common.repository.ShortURLRepository;
 import urlshortener.common.domain.Click;
+import urlshortener.common.services.GoogleSafeBrowsingUrlVerifier;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -75,6 +78,26 @@ public class UrlShortenerController {
 												 HttpServletRequest request) {
 		HttpHeaders h = new HttpHeaders();
 		return new ResponseEntity<>(clickRepository.findByHash(id), h, HttpStatus.ACCEPTED);
+	}
+
+	@RequestMapping(value = "/GoogleSafe", method = RequestMethod.GET)
+	public ResponseEntity<List<Click>> checkGoogle(HttpServletRequest request) {
+
+		GoogleSafeBrowsingConfig config =
+				new GoogleSafeBrowsingConfig(
+						"AIzaSyAj_XBSiZbcDjCA4003qdKHkfwov42JCIs",
+						"http://www.localhost:8080",
+						"apiUrl",
+						"liquid-mountain",
+						"");
+
+
+		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier(new RestTemplate(), config);
+
+		googleSafe.isSafe("www.youtube.com");
+
+		HttpHeaders h = new HttpHeaders();
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
 	@RequestMapping(value = "/link", method = RequestMethod.POST)
