@@ -2,6 +2,7 @@ package urlshortener.common.web;
 
 import com.google.common.hash.Hashing;
 
+import com.sun.media.sound.SoftSynthesizer;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,11 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -23,8 +20,6 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.web.client.RestTemplate;
-import urlshortener.common.domain.GoogleSafeBrowsingConfig;
 import urlshortener.common.domain.ShortURL;
 import urlshortener.common.repository.ClickRepository;
 import urlshortener.common.repository.ShortURLRepository;
@@ -154,26 +149,6 @@ public class UrlShortenerController {
 		return new ResponseEntity<>(clickRepository.findByHash(id), h, HttpStatus.ACCEPTED);
 	}
 
-	@RequestMapping(value = "/GoogleSafe", method = RequestMethod.GET)
-	public ResponseEntity<List<Click>> checkGoogle(HttpServletRequest request) {
-
-		GoogleSafeBrowsingConfig config =
-				new GoogleSafeBrowsingConfig(
-						"AIzaSyAj_XBSiZbcDjCA4003qdKHkfwov42JCIs",
-						"http://www.localhost:8080",
-						"apiUrl",
-						"liquid-mountain",
-						"");
-
-
-		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier(new RestTemplate(), config);
-
-		googleSafe.isSafe("www.youtube.com");
-
-		HttpHeaders h = new HttpHeaders();
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
-	}
-
 	@RequestMapping(value = "/link", method = RequestMethod.POST)
 	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
 											  @RequestParam(value = "sponsor", required = false) String sponsor,
@@ -194,6 +169,11 @@ public class UrlShortenerController {
 		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
 				"https" });
 		if (urlValidator.isValid(url)) {
+
+			GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
+
+			boolean isSafe = googleSafe.isSafe(url);
+
 			String id = Hashing.murmur3_32()
 					.hashString(url, StandardCharsets.UTF_8).toString();
 			ShortURL su = new ShortURL(id, url,
