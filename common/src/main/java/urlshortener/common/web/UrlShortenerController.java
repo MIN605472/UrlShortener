@@ -49,16 +49,16 @@ public class UrlShortenerController {
 			HttpServletRequest request) {
 		ShortURL l = shortURLRepository.findByKey(id);
 		if (l != null) {
-			createAndSaveClick(id, extractIP(request), extractBrowser(request), extractOS(request), extractCountry(request));
+			createAndSaveClick(id, extractIP(request), extractBrowser(request), extractOS(request), extractCountry(request), extractReferrer(request));
 			return createSuccessfulRedirectToResponse(l);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 
-	private void createAndSaveClick(String hash, String ip, String browser, String os, String country) {
+	private void createAndSaveClick(String hash, String ip, String browser, String os, String country, String referrer) {
 		Click cl = new Click(null, hash, new Date(System.currentTimeMillis()),
-				null, browser, os, ip, country);
+				referrer, browser, os, ip, country);
 		cl=clickRepository.save(cl);
 		System.out.println(browser + " " + os + " " + country);
 		LOG.info(cl!=null?"["+hash+"] saved with id ["+cl.getId()+"]":"["+hash+"] was not saved");
@@ -139,6 +139,8 @@ public class UrlShortenerController {
 		}
 		return os;
 	}
+
+	private String extractReferrer(HttpServletRequest request) { return request.getHeader("referer");}
 
 	private ResponseEntity<?> createSuccessfulRedirectToResponse(ShortURL l) {
 		HttpHeaders h = new HttpHeaders();
