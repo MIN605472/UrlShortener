@@ -25,6 +25,8 @@ import urlshortener.common.repository.ClickRepository;
 import urlshortener.common.repository.ShortURLRepository;
 import urlshortener.common.domain.Click;
 import urlshortener.common.services.GoogleSafeBrowsingUrlVerifier;
+import urlshortener.common.services.UrlValidatorAndChecker;
+import urlshortener.common.services.UrlValidatorAndCheckerImpl;
 import urlshortener.common.services.GeolocationAPI;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -45,16 +47,16 @@ public class UrlShortenerController {
 			HttpServletRequest request) {
 		ShortURL l = shortURLRepository.findByKey(id);
 		if (l != null) {
-			createAndSaveClick(id, extractIP(request), extractBrowser(request), extractOS(request), extractCountry(request));
+			createAndSaveClick(id, extractIP(request), extractBrowser(request), extractOS(request), extractCountry(request), extractReferrer(request));
 			return createSuccessfulRedirectToResponse(l);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 
-	private void createAndSaveClick(String hash, String ip, String browser, String os, String country) {
+	private void createAndSaveClick(String hash, String ip, String browser, String os, String country, String referrer) {
 		Click cl = new Click(null, hash, new Date(System.currentTimeMillis()),
-				null, browser, os, ip, country);
+				referrer, browser, os, ip, country);
 		cl=clickRepository.save(cl);
 		System.out.println(browser + " " + os + " " + country);
 		LOG.info(cl!=null?"["+hash+"] saved with id ["+cl.getId()+"]":"["+hash+"] was not saved");
@@ -136,6 +138,8 @@ public class UrlShortenerController {
 		return os;
 	}
 
+	private String extractReferrer(HttpServletRequest request) { return request.getHeader("referer");}
+
 	private ResponseEntity<?> createSuccessfulRedirectToResponse(ShortURL l) {
 		HttpHeaders h = new HttpHeaders();
 		h.setLocation(URI.create(l.getTarget()));
@@ -166,23 +170,27 @@ public class UrlShortenerController {
 
 	private ShortURL createAndSaveIfValid(String url, String sponsor,
 										  String owner, String ip) {
-		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
-				"https" });
-		if (urlValidator.isValid(url)) {
 
-			GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
 
-			boolean isSafe = googleSafe.isSafe(url);
+		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
 
-			String id = Hashing.murmur3_32()
-					.hashString(url, StandardCharsets.UTF_8).toString();
-			ShortURL su = new ShortURL(id, url,
-					linkTo(
-							methodOn(UrlShortenerController.class).redirectTo(
-									id, null)).toUri(), sponsor, new Date(
-							System.currentTimeMillis()), owner,
-					HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null);
-			return shortURLRepository.save(su);
+		boolean isSafe = googleSafe.isSafe(url);
+
+		UrlValidatorAndChecker urlValidatorAndChecker = new UrlValidatorAndCheckerImpl();
+		if (urlValidatorAndChecker.isValid(url)) {
+			if (urlValidatorAndChecker.isAlive(url)) {
+				String id = Hashing.murmur3_32()
+						.hashString(url, StandardCharsets.UTF_8).toString();
+				ShortURL su = new ShortURL(id, url,
+						linkTo(
+								methodOn(UrlShortenerController.class).redirectTo(
+										id, null)).toUri(), sponsor, new Date(
+						System.currentTimeMillis()), owner,
+						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null);
+				return shortURLRepository.save(su);
+			} else{
+				return null;
+			}
 		} else {
 			return null;
 		}
