@@ -32,7 +32,7 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 	}
 
 	@Override
-	@RequestMapping(value = "/stats/{id:(?!link|index).*}", method = RequestMethod.GET)
+	@RequestMapping(value = "/stats/{id}", method = RequestMethod.GET)
 	public ResponseEntity<List<Click>> showStats(@PathVariable String id, HttpServletRequest request) {
 		logger.info("Requested stats with hash " + id);
 		return super.showStats(id, request);
