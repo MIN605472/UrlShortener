@@ -11,24 +11,14 @@ public class UrlValidatorAndCheckerImpl implements UrlValidatorAndChecker {
     public boolean isValid(String url){
         UrlValidator urlValidator = new UrlValidator(new String[] { "http",
                 "https" });
-        if(urlValidator.isValid(url)) {
-            return true;
-        }else{
-            return false;
-        }
+        return urlValidator.isValid(url);
     }
 
     @Override
     public  boolean isAlive(String url){
         int code = getCode(url);
         System.out.println(code);
-        if (code == 200){
-            return true;
-        }
-        else{
-            System.out.println("link muerto");
-            return false;
-        }
+        return code == 200;
     }
 
     private int getCode(String url) {

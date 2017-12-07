@@ -1,5 +1,6 @@
 package urlshortener.common.services;
 
+import org.springframework.stereotype.Service;
 import urlshortener.common.domain.GeoObject;
 
 import javax.ws.rs.core.Response;
@@ -7,9 +8,8 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 
+@Service
 public class GeolocationAPI {
-
-    public GeolocationAPI() {}
 
     public String getCity(String ip) {
         Client client = ClientBuilder.newClient();

@@ -32,7 +32,6 @@ import urlshortener.common.services.GeolocationAPI;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-@RestController
 public class UrlShortenerController {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(UrlShortenerController.class);
@@ -41,6 +40,9 @@ public class UrlShortenerController {
 
 	@Autowired
 	protected ClickRepository clickRepository;
+
+	@Autowired
+	protected GeolocationAPI  geoAPI;
 
 	@RequestMapping(value = "/{id:(?!link).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id,
@@ -67,7 +69,6 @@ public class UrlShortenerController {
 	}
 
 	private String extractCountry(HttpServletRequest request) {
-		GeolocationAPI geoAPI = new GeolocationAPI();
 		return geoAPI.getCity(extractIP(request));
 	}
 
