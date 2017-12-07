@@ -4,8 +4,12 @@ eclipse {
    }
 }
 
+bootRepackage {
+    enabled = false
+}
+
 dependencies {
-    compile project(':common')
+    //compile project(':common')
 
     runtime 'org.hsqldb:hsqldb'
 
@@ -15,4 +19,18 @@ dependencies {
     // Testing framework
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.apache.httpcomponents:httpclient'
+
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-jdbc'
+    compile 'org.springframework.hateoas:spring-hateoas'
+
+    compile "org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.24"
+    compile "org.glassfish.jersey.core:jersey-server:2.24"
+    compile "org.glassfish.jersey.containers:jersey-container-servlet:2.24"
+    compile "org.glassfish.jersey.media:jersey-media-moxy:2.24"
+
+    compile 'commons-validator:commons-validator:1.6'
+    compile 'com.google.guava:guava:23.0'
+
+    testRuntime 'org.hsqldb:hsqldb'
 }

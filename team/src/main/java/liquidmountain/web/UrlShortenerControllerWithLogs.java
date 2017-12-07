@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import urlshortener.common.domain.Click;
-import urlshortener.common.domain.ShortURL;
-import urlshortener.common.web.UrlShortenerController;
+import liquidmountain.domain.Click;
+import liquidmountain.domain.ShortURL;
+import liquidmountain.web.UrlShortenerController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
