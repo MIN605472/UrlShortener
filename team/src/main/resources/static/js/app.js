@@ -102,6 +102,7 @@ $(document).ready(() => {
       },
     });
   });
+
   $('#generate-new-qr').click(() => {
     $('#qr-adder').before(qrCardTemplate(numberOfQrsGenerated));
     $(`#qr-generator-${numberOfQrsGenerated}`).submit(qrGeneratorHandler(numberOfQrsGenerated));
@@ -110,5 +111,40 @@ $(document).ready(() => {
     if (numberOfQrsGenerated > 2) {
       $('#qr-adder').remove();
     }
+  });
+
+  $('#stats').submit((event) => {
+      event.preventDefault();
+      $.ajax({
+          url: '/api/stats/' + $(event.currentTarget).serialize(),
+          type: 'GET',
+          //data: $(event.currentTarget).serialize(),
+          success(msg) {
+              // language=HTML
+              $('#result').html(`
+                <div class="container">
+                    <h2>Country stats:</h2>
+                    <div class="panel panel-group">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Country</th>
+                                    <th>Users</th>
+                                </tr>
+                             </thead>
+                             <tbody>
+                                <tr>
+                                    <td>${msg[0].browser}</td>
+                                    <td>${msg[0].platform}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`);
+          },
+          error() {
+              $('#result').html("<div class='alert alert-danger lead'>ERROR</div>");
+          },
+      });
   });
 });

@@ -11,15 +11,14 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-12 text-center">
-          <h1>URL Shortener</h1>
-          <p class="lead">A front-end example page for the project</p>
+          <h1>Shortened URL Stats</h1>
           <br>
-          <form class="col-lg-12" role="form" id="shortener" action="">
+          <form class="col-lg-12" role="form" id="stats" action="">
             <div class="input-group input-group-lg offset-sm-4 col-sm-4">
               <input type="text" class="center-block form-control input-lg" title="Enter a URL"
-                     placeholder="Enter a URL" name="url">
+                     placeholder="Enter a shortened URL ID" name="url">
               <span class="input-group-btn"><button class="btn btn-lg btn-primary"
-                                                    type="submit">Short me!</button></span>
+                                                    type="submit">Show stats</button></span>
             </div>
           </form>
         </div>
@@ -32,13 +31,7 @@
           </div>
         </div>
       </div>
-      <div class="row" id="qr-adder">
-        <div class="col-md-4 offset-md-4">
-          <div class="card" style="border-style: dashed; border-width: 2px; height: 250px; display: flex; align-items: center; justify-content: center;">
-            <button type="button" class="btn btn-link" id="generate-new-qr">Generate a new QR</button>
-          </div>
-        </div>
-      </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
