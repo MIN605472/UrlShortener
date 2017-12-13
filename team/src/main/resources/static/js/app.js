@@ -2,7 +2,7 @@
 let numberOfQrsGenerated = 0;
 const qrCardTemplate = qrNumber => `
     <div class="row">
-      <div class="col-md-4 offset-md-4">
+      <div class="col-md-6 offset-md-3">
         <div class="card">
           <div class="row">
             <div class="col-md-6">
@@ -102,6 +102,7 @@ $(document).ready(() => {
       },
     });
   });
+
   $('#generate-new-qr').click(() => {
     $('#qr-adder').before(qrCardTemplate(numberOfQrsGenerated));
     $(`#qr-generator-${numberOfQrsGenerated}`).submit(qrGeneratorHandler(numberOfQrsGenerated));
@@ -110,5 +111,77 @@ $(document).ready(() => {
     if (numberOfQrsGenerated > 2) {
       $('#qr-adder').remove();
     }
+  });
+
+
+
+  $('#stats').submit((event) => {
+      event.preventDefault();
+      $.ajax({
+          url: '/api/stats/' + $(event.currentTarget).serialize(),
+          type: 'GET',
+          //data: $(event.currentTarget).serialize(),
+          success(msg) {
+              let rowsCountry = '';
+              let rowsBrowser = '';
+              let rowsPlatform = '';
+              msg.countries.forEach((country) =>
+                  rowsCountry += "<td>" + country.data + "</td>"
+                      + "<td>" + country.users + "</td>");
+              msg.browsers.forEach((browser) =>
+                  rowsBrowser += "<td>" + browser.data + "</td>"
+                      + "<td>" + browser.users + "</td>");
+              msg.platforms.forEach((platform) =>
+                  rowsPlatform += "<td>" + platform.data + "</td>"
+                      + "<td>" + platform.users + "</td>");
+              // language=HTML
+              $('#result').html(`
+                <div class="container">
+                    
+                    <div class="panel panel-group text-center">
+                        <h2>URL ID Access Stats:</h2>
+                        <p>By country, browser and platform of access.</p>
+                        <table class="table table-hover text-center">
+                            <thead>
+                                <tr>
+                                    <th>Country</th>
+                                    <th>Users</th>
+                                </tr>
+                             </thead>
+                             <tbody>
+                                <tr>`
+                                + rowsCountry +
+                                `</tr>
+                            </tbody>
+                            <thead>
+                                <tr>
+                                    <th>Browser</th>
+                                    <th>Users</th>
+                                </tr>
+                             </thead>
+                             <tbody>
+                                <tr>`
+                                + rowsBrowser +
+                                `</tr>
+                            </tbody>
+                            <thead>
+                                <tr>
+                                    <th>Platform</th>
+                                    <th>Users</th>
+                                </tr>
+                             </thead>
+                             <tbody>
+                                <tr>`
+                                + rowsPlatform +
+                                `</tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`);
+          },
+          error() {
+              $('#result').html("<div class='alert alert-danger lead'>ERROR</div>");
+          },
+      });
   });
 });

@@ -10,34 +10,26 @@
   <body>
     <div class="container-fluid">
       <div class="row">
-
         <div class="col-lg-12 text-center">
           <img src="images/logo.png" class="img-responsive" style="max-width: 10%">
           <h1>Liquid Mountain's URL Shortener</h1>
-          <p class="lead">Much better than other URL Shorteners.</p>
+          <p class="lead">Did you know? We also provide stats.</p>
           <br>
-          <form class="col-lg-12" role="form" id="shortener" action="">
+          <form class="col-lg-12" role="form" id="stats" action="">
             <div class="input-group input-group-lg offset-sm-3 col-sm-6">
               <input type="text" class="center-block form-control input-lg" title="Enter a URL"
-                     placeholder="Enter a URL" name="url">
+                     placeholder="Enter a shortened URL ID" name="url">
               <span class="input-group-btn"><button class="btn btn-lg btn-primary"
-                                                    type="submit">Short me!</button></span>
+                                                    type="submit">Show stats</button></span>
             </div>
           </form>
         </div>
       </div>
       <div class="row">
         <div class="col-lg-12 text-center">
-          <div class="offset-sm-4 col-sm-4 text-center">
+          <div class="offset-sm-3 col-sm-6 text-center">
             <br/>
             <div id="result"></div>
-          </div>
-        </div>
-      </div>
-      <div class="row" id="qr-adder">
-        <div class="col-md-6 offset-md-3">
-          <div class="card" style="border-style: dashed; border-width: 2px; height: 250px; display: flex; align-items: center; justify-content: center;">
-            <button type="button" class="btn btn-link" id="generate-new-qr">Generate a new QR</button>
           </div>
         </div>
       </div>
@@ -53,11 +45,5 @@
             crossorigin="anonymous"></script>
     <script type="text/javascript"
             src="js/app.js"></script>
-    <footer >
-      <div class="footer navbar-fixed-bottom text-center" >
-        <a href="http://localhost:8080/stats.html">Stats</a>
-      </div>
-    </footer>
   </body>
-
 </html>
