@@ -113,6 +113,8 @@ $(document).ready(() => {
     }
   });
 
+
+
   $('#stats').submit((event) => {
       event.preventDefault();
       $.ajax({
@@ -133,9 +135,10 @@ $(document).ready(() => {
                                 </tr>
                              </thead>
                              <tbody>
-                                <tr>`+
-                                    countries
-                                +`</tr>
+                                <tr>
+                                    <td>Test</td>
+                                    <td>2</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
