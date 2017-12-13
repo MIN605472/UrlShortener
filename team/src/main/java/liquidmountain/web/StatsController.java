@@ -1,6 +1,8 @@
 package liquidmountain.web;
 
 import liquidmountain.domain.Click;
+import liquidmountain.domain.DataStat;
+import liquidmountain.domain.URLStats;
 import liquidmountain.repository.ClickRepository;
 import liquidmountain.repository.ShortURLRepository;
 import org.slf4j.Logger;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class StatsController {
 
     @RequestMapping(value = "/api/stats/{id:(?!link).*}", method = RequestMethod.GET)
     public ResponseEntity<URLStats> showStats(@PathVariable String id,
-                                                 HttpServletRequest request) {
+                                              HttpServletRequest request) {
         if(id.contains("url="))
             id = id.replace("url=", "");
         LOG.info("Requested stats with hash " + id);
@@ -101,48 +102,3 @@ public class StatsController {
     }
 }
 
-class URLStats {
-    public List<DataStat> countries;
-    public List<DataStat> browsers;
-    public List<DataStat> platforms;
-
-    public URLStats(List<DataStat> countries, List<DataStat> browsers, List<DataStat> platforms) {
-        this.countries = countries;
-        this.browsers = browsers;
-        this.platforms = platforms;
-    }
-
-    public URLStats(){
-        this.countries = new ArrayList<>();
-        this.browsers = new ArrayList<>();
-        this.platforms = new ArrayList<>();
-    }
-
-}
-
-class DataStat {
-    private String data;
-    private int users;
-
-    public DataStat(String data, int users) {
-        this.data = data;
-        this.users = users;
-    }
-
-    public String getData() {
-
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public int getUsers() {
-        return users;
-    }
-
-    public void setUsers(int users) {
-        this.users = users;
-    }
-}

@@ -133,10 +133,9 @@ $(document).ready(() => {
                                 </tr>
                              </thead>
                              <tbody>
-                                <tr>
-                                    <td>${msg[0].browser}</td>
-                                    <td>${msg[0].platform}</td>
-                                </tr>
+                                <tr>`+
+                                    countries
+                                +`</tr>
                             </tbody>
                         </table>
                     </div>
