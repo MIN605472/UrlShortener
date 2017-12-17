@@ -124,7 +124,6 @@ public class ShortURLRepositoryTests {
 		assertEquals(repository.count().intValue(), 0);
 	}
 
-	@Ignore
 	@Test
 	public void thatUpdateUpdate() {
 		repository.save(url1());

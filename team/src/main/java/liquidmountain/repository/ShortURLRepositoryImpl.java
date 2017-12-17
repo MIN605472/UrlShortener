@@ -85,7 +85,7 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
 					"update shorturl set target=?, sponsor=?, created=?, owner=?, mode=?, safe=?, ip=?, country=?, expirationdate=?, expirationtime=? where hash=?",
 					su.getTarget(), su.getSponsor(), su.getCreated(),
 					su.getOwner(), su.getMode(), su.getSafe(), su.getIP(),
-					su.getCountry(), su.getHash(), su.getExpirationDate(), su.getExpirationTime());
+					su.getCountry(), su.getExpirationDate(), su.getExpirationTime(), su.getHash());
 		} catch (Exception e) {
 			log.debug("When update for hash " + su.getHash(), e);
 		}
