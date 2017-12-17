@@ -67,7 +67,8 @@ public class UrlShortenerTests {
     public void thatShortenerCreatesARedirectIfTheURLisOK() throws Exception {
         configureTransparentSave();
 
-        mockMvc.perform(post("/link").param("url", "http://example.com/"))
+        mockMvc.perform(post("/link").param("url", "http://example.com/").param(
+                "date", "2017-12-12").param("time", "10:10"))
                 .andDo(print())
                 .andExpect(redirectedUrl("http://localhost/f684a3c4"))
                 .andExpect(status().isCreated())
@@ -83,7 +84,8 @@ public class UrlShortenerTests {
 
         mockMvc.perform(
                 post("/link").param("url", "http://example.com/").param(
-                        "sponsor", "http://sponsor.com/")).andDo(print())
+                        "sponsor", "http://sponsor.com/").param("date",
+                        "2017-12-12").param("time", "10:10")).andDo(print())
                 .andExpect(redirectedUrl("http://localhost/f684a3c4"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.hash", is("f684a3c4")))

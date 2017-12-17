@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
-import java.util.List;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.UUID;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -42,14 +49,52 @@ public class UrlShortenerController {
 //	@Autowired
 //	protected GeolocationAPI  geoAPI;
 
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public ResponseEntity<?> index(HttpServletRequest request) {
+		HttpHeaders h = new HttpHeaders();
+		String own = request.getRequestURL().toString();
+		h.setLocation(URI.create(own + "index.html"));
+		System.out.println(h.getLocation());
+		return new ResponseEntity<>(h, HttpStatus.TEMPORARY_REDIRECT);
+	}
+
 	@RequestMapping(value = "/{id:(?!link).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id,
 			HttpServletRequest request) {
 		ShortURL l = shortURLRepository.findByKey(id);
-		if (l != null) {
-			ExtractInfo ex = new ExtractInfo();
-			createAndSaveClick(id, ex.extractAll(request));
-			return createSuccessfulRedirectToResponse(l);
+		//java.util.Date now = new Date(System.currentTimeMillis());
+		if(l != null){
+			// Construct date and time objects
+			Calendar dateCal = Calendar.getInstance();
+			dateCal.setTime(l.getExpirationDate());
+			Calendar timeCal = Calendar.getInstance();
+			timeCal.setTime(l.getExpirationTime());
+
+			// Extract the time of the "time" object to the "date"
+			dateCal.set(Calendar.HOUR_OF_DAY, timeCal.get(Calendar.HOUR_OF_DAY));
+			dateCal.set(Calendar.MINUTE, timeCal.get(Calendar.MINUTE));
+			dateCal.set(Calendar.SECOND, timeCal.get(Calendar.SECOND));
+
+			// Get the time value!
+			java.util.Date exp = dateCal.getTime();
+
+			Instant then = exp.toInstant();
+			Instant now = ZonedDateTime.now().toInstant();
+
+			if (now.isBefore(then)) {
+				ExtractInfo ex = new ExtractInfo();
+				createAndSaveClick(id, ex.extractAll(request));
+				return createSuccessfulRedirectToResponse(l);
+			} else {
+				LOG.info("Requested link has expired. Returning " + HttpStatus.GONE);
+				HttpHeaders h = new HttpHeaders();
+				String own = request.getRequestURL().toString();
+				String normal = own.substring(0, own.indexOf(l.getHash()));
+				h.setLocation(URI.create(normal + "exp.html"));
+				System.out.println(h.getLocation());
+				System.out.println(l.getMode());
+				return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
+			}
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -82,11 +127,34 @@ public class UrlShortenerController {
 
 	@RequestMapping(value = "/link", method = RequestMethod.POST)
 	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
+											  @RequestParam("date") String date,
+											  @RequestParam("time") String time,
 											  @RequestParam(value = "sponsor", required = false) String sponsor,
 											  HttpServletRequest request) {
 		ExtractInfo ex = new ExtractInfo();
+		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat sdft = new SimpleDateFormat("HH:mm");
+		Date d = new Date(System.currentTimeMillis());
+		Time t = new Time(System.currentTimeMillis());
+		if(date.equals("")) {
+			d = null;
+		} else {
+			try {
+				d.setTime(sdf.parse(date).getTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		if(time.equals("")) {
+			t = null;
+		} else try {
+			t.setTime(sdft.parse(time).getTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
 		ShortURL su = createAndSaveIfValid(url, sponsor, UUID
-				.randomUUID().toString(), ex.extractIP(request));
+				.randomUUID().toString(), ex.extractIP(request), d, t);
 		if (su != null) {
 			HttpHeaders h = new HttpHeaders();
 			h.setLocation(su.getUri());
@@ -97,7 +165,7 @@ public class UrlShortenerController {
 	}
 
 	private ShortURL createAndSaveIfValid(String url, String sponsor,
-										  String owner, String ip) {
+										  String owner, String ip, Date expirationDate, Time expirationTime) {
 		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
 		boolean isSafe = googleSafe.isSafe(url);
 
@@ -111,7 +179,7 @@ public class UrlShortenerController {
 								methodOn(UrlShortenerController.class).redirectTo(
 										id, null)).toUri(), sponsor, new Date(
 						System.currentTimeMillis()), owner,
-						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null);
+						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null, expirationDate, expirationTime);
 				return shortURLRepository.save(su);
 			} else{
 				return null;
