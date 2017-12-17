@@ -35,11 +35,26 @@ public class ShortURL {
 		this.safe = safe;
 		this.ip = ip;
 		this.country = country;
-		this.expirationDate = expirationDate;
-		this.expirationTime = expirationTime;
+		if(expirationDate == null) { //if it's null, means it's forever
+			Calendar c = Calendar.getInstance();
+			c.setTime(new Date(System.currentTimeMillis()));
+			c.add(Calendar.YEAR, 999);  // add 999 years
+			java.util.Date d = c.getTime();
+			this.expirationDate = new Date(d.getTime());
+		} else this.expirationDate = expirationDate;
+		if(expirationTime == null) { // same as above
+			Calendar c = Calendar.getInstance();
+			c.setTime(new Date(System.currentTimeMillis()));
+			c.set(Calendar.HOUR_OF_DAY, 0);  // set as 00:00
+			c.set(Calendar.MINUTE, 0); // set as 00:00
+			c.set(Calendar.SECOND, 0); // jeez...
+			java.util.Date d = c.getTime();
+			this.expirationTime = new Time(d.getTime());
+		} else this.expirationTime = expirationTime;
 	}
 
-	public ShortURL(String hash, String target, URI uri, String sponsor, Date created, String owner, Integer mode, Boolean safe, String ip, String country) {
+	public ShortURL(String hash, String target, URI uri, String sponsor, Date created, String owner, Integer mode,
+					Boolean safe, String ip, String country) {
 		this.hash = hash;
 		this.target = target;
 		this.uri = uri;
@@ -52,7 +67,7 @@ public class ShortURL {
 		this.country = country;;
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date(System.currentTimeMillis()));
-		c.add(Calendar.DATE, 1);  // number of days to add
+		c.add(Calendar.YEAR, 999);  // number of days to add
 		java.util.Date d = c.getTime();
 		this.expirationDate = new Date(d.getTime());
 		this.expirationTime = new Time(System.currentTimeMillis());

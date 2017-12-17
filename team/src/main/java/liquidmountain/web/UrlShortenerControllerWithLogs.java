@@ -3,6 +3,7 @@ package liquidmountain.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import liquidmountain.domain.ShortURL;
 
@@ -12,6 +13,13 @@ import javax.servlet.http.HttpServletRequest;
 public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UrlShortenerControllerWithLogs.class);
+
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public ResponseEntity<?> index(HttpServletRequest request) {
+		logger.info("Requested index");
+		return super.index(request);
+	}
+
 
 	@Override
 	@RequestMapping(value = "/{id:(?!link|index|stats).*}", method = RequestMethod.GET)

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +49,15 @@ public class UrlShortenerController {
 //	@Autowired
 //	protected GeolocationAPI  geoAPI;
 
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public ResponseEntity<?> index(HttpServletRequest request) {
+		HttpHeaders h = new HttpHeaders();
+		String own = request.getRequestURL().toString();
+		h.setLocation(URI.create(own + "index.html"));
+		System.out.println(h.getLocation());
+		return new ResponseEntity<>(h, HttpStatus.TEMPORARY_REDIRECT);
+	}
+
 	@RequestMapping(value = "/{id:(?!link).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id,
 			HttpServletRequest request) {
@@ -77,7 +87,13 @@ public class UrlShortenerController {
 				return createSuccessfulRedirectToResponse(l);
 			} else {
 				LOG.info("Requested link has expired. Returning " + HttpStatus.GONE);
-				return new ResponseEntity<>(HttpStatus.GONE);
+				HttpHeaders h = new HttpHeaders();
+				String own = request.getRequestURL().toString();
+				String normal = own.substring(0, own.indexOf(l.getHash()));
+				h.setLocation(URI.create(normal + "exp.html"));
+				System.out.println(h.getLocation());
+				System.out.println(l.getMode());
+				return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
 			}
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -120,12 +136,23 @@ public class UrlShortenerController {
 		DateFormat sdft = new SimpleDateFormat("HH:mm");
 		Date d = new Date(System.currentTimeMillis());
 		Time t = new Time(System.currentTimeMillis());
-		try {
-			d.setTime(sdf.parse(date).getTime());
+		if(date.equals("")) {
+			d = null;
+		} else {
+			try {
+				d.setTime(sdf.parse(date).getTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		if(time.equals("")) {
+			t = null;
+		} else try {
 			t.setTime(sdft.parse(time).getTime());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+
 		ShortURL su = createAndSaveIfValid(url, sponsor, UUID
 				.randomUUID().toString(), ex.extractIP(request), d, t);
 		if (su != null) {
