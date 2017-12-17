@@ -95,7 +95,7 @@ $(document).ready(() => {
       type: 'POST',
       data: $(event.currentTarget).serialize(),
       success(msg) {
-        $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></div>`);
+        $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></br><p>The link will expire ${msg.expirationDate} at ${msg.expirationTime}</p></div>`);
       },
       error() {
         $('#result').html("<div class='alert alert-danger lead'>ERROR</div>");

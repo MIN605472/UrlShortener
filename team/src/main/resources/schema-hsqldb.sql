@@ -14,7 +14,9 @@ CREATE TABLE SHORTURL(
 	MODE		INTEGER,					-- Redirect mode
 	SAFE		BOOLEAN,						-- Safe target
 	IP			VARCHAR(20),				-- IP
-	COUNTRY		VARCHAR(50)					-- Country
+	COUNTRY		VARCHAR(50),			-- Country
+	EXPIRATIONDATE DATE,				-- Expiration Date
+	EXPIRATIONTIME TIME					-- Expiration Time
 );
 
 -- Click
