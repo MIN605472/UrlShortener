@@ -46,23 +46,10 @@ public class UrlShortenerController {
 	@Autowired
 	protected ExtractInfo extractInfo;
 
-//	@Autowired
-//	protected GeolocationAPI  geoAPI;
-
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ResponseEntity<?> index(HttpServletRequest request) {
-		HttpHeaders h = new HttpHeaders();
-		String own = request.getRequestURL().toString();
-		h.setLocation(URI.create(own + "index.html"));
-		System.out.println(h.getLocation());
-		return new ResponseEntity<>(h, HttpStatus.TEMPORARY_REDIRECT);
-	}
-
 	@RequestMapping(value = "/{id:(?!link).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id,
 			HttpServletRequest request) {
 		ShortURL l = shortURLRepository.findByKey(id);
-		//java.util.Date now = new Date(System.currentTimeMillis());
 		if(l != null){
 			// Construct date and time objects
 			Calendar dateCal = Calendar.getInstance();
@@ -91,8 +78,6 @@ public class UrlShortenerController {
 				String own = request.getRequestURL().toString();
 				String normal = own.substring(0, own.indexOf(l.getHash()));
 				h.setLocation(URI.create(normal + "exp.html"));
-				System.out.println(h.getLocation());
-				System.out.println(l.getMode());
 				return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
 			}
 		} else {
