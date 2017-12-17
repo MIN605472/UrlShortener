@@ -14,13 +14,6 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UrlShortenerControllerWithLogs.class);
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ResponseEntity<?> index(HttpServletRequest request) {
-		logger.info("Requested index");
-		return super.index(request);
-	}
-
-
 	@Override
 	@RequestMapping(value = "/{id:(?!link|index|stats).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id, HttpServletRequest request) {
@@ -37,11 +30,4 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 		logger.info("Requested new short for uri " + url + " with expiration date " + date + " y hora " + time);
 		return super.shortener(url, date, time, sponsor, request);
 	}
-
-//	@Override
-//	@RequestMapping(value = "/stats/{id}", method = RequestMethod.GET)
-//	public ResponseEntity<List<Click>> showStats(@PathVariable String id, HttpServletRequest request) {
-//		logger.info("Requested stats with hash " + id);
-//		return super.showStats(id, request);
-//	}
 }

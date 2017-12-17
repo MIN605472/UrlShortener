@@ -33,16 +33,6 @@ public class StatsController {
     @Autowired
     protected ClickRepository clickRepository;
 
-    @RequestMapping(value = "/api/stats", method = RequestMethod.GET)
-    public ResponseEntity<?> redirectStats(HttpServletRequest request) {
-        HttpHeaders h = new HttpHeaders();
-        String own = request.getRequestURL().toString();
-        String normal = own.substring(0, own.indexOf("api/stats"));
-        h.setLocation(URI.create(normal + "stats.html"));
-        System.out.println(h.getLocation());
-        return new ResponseEntity<>(h, HttpStatus.TEMPORARY_REDIRECT);
-    }
-
     @RequestMapping(value = "/api/stats/{id:(?!link).*}", method = RequestMethod.GET)
     public ResponseEntity<URLStats> showStats(@PathVariable String id,
                                               HttpServletRequest request) {
