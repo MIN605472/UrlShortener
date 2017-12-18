@@ -95,7 +95,7 @@ $(document).ready(() => {
     modal.style.display = "block";
     event.preventDefault();
       $.ajax({
-      url: '/link',
+      url: '/api/urls',
       type: 'POST',
       data: $(event.currentTarget).serialize(),
       success(msg) {

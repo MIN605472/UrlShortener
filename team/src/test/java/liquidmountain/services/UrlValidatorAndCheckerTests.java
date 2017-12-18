@@ -1,4 +1,4 @@
-package liquidmountain.common.services;
+package liquidmountain.services;
 
 import liquidmountain.services.UrlValidatorAndChecker;
 import liquidmountain.services.UrlValidatorAndCheckerImpl;
