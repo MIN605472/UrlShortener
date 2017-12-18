@@ -154,23 +154,17 @@ public class UrlShortenerController {
 		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
 		boolean isSafe = googleSafe.isSafe(url);
 
-		ValidatorHystrix v = new ValidatorHystrix(url);
-		UrlValidatorAndChecker urlValidatorAndChecker = new UrlValidatorAndCheckerImpl();
-		v.execute();
-		if (v.valid) {
-			if (v.alive) {
-				String id = Hashing.murmur3_32()
-						.hashString(url, StandardCharsets.UTF_8).toString();
-				ShortURL su = new ShortURL(id, url,
-						linkTo(
-								methodOn(UrlShortenerController.class).redirectTo(
-										id, null)).toUri(), sponsor, new Date(
-						System.currentTimeMillis()), owner,
-						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null, expirationDate, expirationTime);
-				return shortURLRepository.save(su);
-			} else{
-				return null;
-			}
+		UrlValidatorAndCheckerImpl urlValidatorAndChecker = new UrlValidatorAndCheckerImpl(url);
+		if (urlValidatorAndChecker.execute()) {
+			String id = Hashing.murmur3_32()
+					.hashString(url, StandardCharsets.UTF_8).toString();
+			ShortURL su = new ShortURL(id, url,
+					linkTo(
+							methodOn(UrlShortenerController.class).redirectTo(
+									id, null)).toUri(), sponsor, new Date(
+					System.currentTimeMillis()), owner,
+					HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null, expirationDate, expirationTime);
+			return shortURLRepository.save(su);
 		} else {
 			return null;
 		}

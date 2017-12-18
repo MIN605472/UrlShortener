@@ -10,29 +10,32 @@ import static org.junit.Assert.assertFalse;
 
 public class UrlValidatorAndCheckerTests {
 
-    private UrlValidatorAndChecker validator;
-
-    @Before
-    public void setup() {
-        validator = new UrlValidatorAndCheckerImpl();
-    }
-
     @Test
     public void thatIsValidWorked(){
-        String url1 = "https://twitter.com";
-        String url2 = "hps:/twitter.com";
-        Boolean valid1 = validator.isValid(url1);
-        Boolean valid2 = validator.isValid(url2);
+        UrlValidatorAndCheckerImpl validator1 = new UrlValidatorAndCheckerImpl("https://twitter.com");
+        UrlValidatorAndCheckerImpl validator2 = new UrlValidatorAndCheckerImpl("hps:/twitter.com");
+        Boolean valid1 = validator1.isValid(validator1.url);
+        Boolean valid2 = validator2.isValid(validator2.url);
         assertTrue(valid1);
         assertFalse(valid2);
     }
 
     @Test
     public void thatIsAliveWorked(){
-        String url1 = "https://twitter.com";
-        String url2 = "https://twitter.com/pccmponentes";
-        Boolean valid1 = validator.isAlive(url1);
-        Boolean valid2 = validator.isAlive(url2);
+        UrlValidatorAndCheckerImpl validator1 = new UrlValidatorAndCheckerImpl("https://twitter.com");
+        UrlValidatorAndCheckerImpl validator2 = new UrlValidatorAndCheckerImpl("https://twitter.com/pccmponentes");
+        Boolean valid1 = validator1.isAlive(validator1.url);
+        Boolean valid2 = validator2.isAlive(validator2.url);
+        assertTrue(valid1);
+        assertFalse(valid2);
+    }
+
+    @Test
+    public void thatValidatorWorked(){
+        UrlValidatorAndCheckerImpl validator1 = new UrlValidatorAndCheckerImpl("https://twitter.com");
+        UrlValidatorAndCheckerImpl validator2 = new UrlValidatorAndCheckerImpl("hps:/twitter.com");
+        Boolean valid1 = validator1.execute();
+        Boolean valid2 = validator2.execute();
         assertTrue(valid1);
         assertFalse(valid2);
     }
