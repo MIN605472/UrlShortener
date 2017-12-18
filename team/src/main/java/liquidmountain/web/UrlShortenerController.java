@@ -159,9 +159,15 @@ public class UrlShortenerController {
 	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
 											  @RequestParam(value = "sponsor", required = false) String sponsor,
 											  HttpServletRequest request) {
+
+		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
+
+		boolean isSafe = googleSafe.isSafe(url);
+
 		ShortURL su = createAndSaveIfValid(url, sponsor, UUID
 				.randomUUID().toString(), extractIP(request));
-		if (su != null) {
+
+		if (su != null && isSafe) {
 			HttpHeaders h = new HttpHeaders();
 			h.setLocation(su.getUri());
 			return new ResponseEntity<>(su, h, HttpStatus.CREATED);
@@ -172,11 +178,6 @@ public class UrlShortenerController {
 
 	private ShortURL createAndSaveIfValid(String url, String sponsor,
 										  String owner, String ip) {
-
-
-		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
-
-		boolean isSafe = googleSafe.isSafe(url);
 
 		UrlValidatorAndChecker urlValidatorAndChecker = new UrlValidatorAndCheckerImpl();
 		if (urlValidatorAndChecker.isValid(url)) {
