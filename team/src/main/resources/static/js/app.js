@@ -87,15 +87,24 @@ function logoChangeHandler(qrNumber) {
   };
 }
 
+// Get the modal
+let modal = document.getElementById('myModal');
+
 $(document).ready(() => {
   $('#shortener').submit((event) => {
+    modal.style.display = "block";
     event.preventDefault();
-    $.ajax({
+      $.ajax({
       url: '/link',
       type: 'POST',
       data: $(event.currentTarget).serialize(),
       success(msg) {
-        $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></div>`);
+          modal.style.display = "none";
+          if(msg.expirationDate.substring(0, 1) !== "3"){
+              $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></br><p>The link will expire ${msg.expirationDate} at ${msg.expirationTime}</p></div>`);
+          }
+          else $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></div>`);
+
       },
       error() {
         $('#result').html("<div class='alert alert-danger lead'>ERROR</div>");
@@ -113,7 +122,17 @@ $(document).ready(() => {
     }
   });
 
+  $('#goBackButton').click(() => {
+      window.location = "index.html"
+  });
 
+    $('#statsButton').click(() => {
+        window.location = "stats.html"
+    });
+
+    $('#indexButton').click(() => {
+        window.location = "index.html"
+    });
 
   $('#stats').submit((event) => {
       event.preventDefault();

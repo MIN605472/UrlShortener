@@ -4,6 +4,7 @@ import liquidmountain.repository.ShortURLRepository;
 import liquidmountain.repository.ShortURLRepositoryImpl;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
