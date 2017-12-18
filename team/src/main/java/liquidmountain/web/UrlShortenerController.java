@@ -154,9 +154,11 @@ public class UrlShortenerController {
 		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
 		boolean isSafe = googleSafe.isSafe(url);
 
+		ValidatorHystrix v = new ValidatorHystrix(url);
 		UrlValidatorAndChecker urlValidatorAndChecker = new UrlValidatorAndCheckerImpl();
-		if (urlValidatorAndChecker.isValid(url)) {
-			if (urlValidatorAndChecker.isAlive(url)) {
+		v.execute();
+		if (v.valid) {
+			if (v.alive) {
 				String id = Hashing.murmur3_32()
 						.hashString(url, StandardCharsets.UTF_8).toString();
 				ShortURL su = new ShortURL(id, url,
