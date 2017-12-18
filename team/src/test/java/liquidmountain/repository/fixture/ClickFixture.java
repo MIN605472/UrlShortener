@@ -1,4 +1,4 @@
-package liquidmountain.common.repository.fixture;
+package liquidmountain.repository.fixture;
 
 import liquidmountain.domain.Click;
 import liquidmountain.domain.ShortURL;

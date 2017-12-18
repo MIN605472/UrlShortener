@@ -1,4 +1,4 @@
-package liquidmountain.common.web.fixture;
+package liquidmountain.web.fixture;
 
 import liquidmountain.domain.ShortURL;
 

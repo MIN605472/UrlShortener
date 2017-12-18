@@ -1,7 +1,6 @@
-package liquidmountain.common.web;
+package liquidmountain.web;
 
-import liquidmountain.common.web.fixture.ShortURLFixture;
-import liquidmountain.web.UrlShortenerController;
+import liquidmountain.web.fixture.ShortURLFixture;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -67,7 +66,7 @@ public class UrlShortenerTests {
     public void thatShortenerCreatesARedirectIfTheURLisOK() throws Exception {
         configureTransparentSave();
 
-        mockMvc.perform(post("/link").param("url", "http://example.com/").param(
+        mockMvc.perform(post("/api/urls").param("url", "http://example.com/").param(
                 "date", "2017-12-12").param("time", "10:10"))
                 .andDo(print())
                 .andExpect(redirectedUrl("http://localhost/f684a3c4"))
@@ -83,7 +82,7 @@ public class UrlShortenerTests {
         configureTransparentSave();
 
         mockMvc.perform(
-                post("/link").param("url", "http://example.com/").param(
+                post("/api/urls").param("url", "http://example.com/").param(
                         "sponsor", "http://sponsor.com/").param("date",
                         "2017-12-12").param("time", "10:10")).andDo(print())
                 .andExpect(redirectedUrl("http://localhost/f684a3c4"))
@@ -98,7 +97,7 @@ public class UrlShortenerTests {
     public void thatShortenerFailsIfTheURLisWrong() throws Exception {
         configureTransparentSave();
 
-        mockMvc.perform(post("/link").param("url", "someKey")).andDo(print())
+        mockMvc.perform(post("/api/urls").param("url", "someKey")).andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -107,7 +106,7 @@ public class UrlShortenerTests {
         when(shortURLRepository.save(any(ShortURL.class)))
                 .thenReturn(null);
 
-        mockMvc.perform(post("/link").param("url", "someKey")).andDo(print())
+        mockMvc.perform(post("/api/urls").param("url", "someKey")).andDo(print())
                 .andExpect(status().isBadRequest());
     }
 

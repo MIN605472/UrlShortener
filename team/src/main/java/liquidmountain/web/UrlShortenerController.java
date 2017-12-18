@@ -1,22 +1,24 @@
 package liquidmountain.web;
 
 import com.google.common.hash.Hashing;
-import liquidmountain.services.*;
+import liquidmountain.domain.Click;
+import liquidmountain.domain.ShortURL;
+import liquidmountain.repository.ClickRepository;
+import liquidmountain.repository.ShortURLRepository;
+import liquidmountain.services.ExtractInfo;
+import liquidmountain.services.GoogleSafeBrowsingUrlVerifier;
+import liquidmountain.services.UrlValidatorAndChecker;
+import liquidmountain.services.UrlValidatorAndCheckerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import liquidmountain.domain.Click;
-import liquidmountain.domain.ShortURL;
-import liquidmountain.repository.ClickRepository;
-import liquidmountain.repository.ShortURLRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -46,7 +48,7 @@ public class UrlShortenerController {
 	@Autowired
 	protected ExtractInfo extractInfo;
 
-	@RequestMapping(value = "/{id:(?!link).*}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id:[a-zA-Z0-9]+(?!\\.html)}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id,
 			HttpServletRequest request) {
 		ShortURL l = shortURLRepository.findByKey(id);
@@ -110,7 +112,7 @@ public class UrlShortenerController {
 		return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
 	}
 
-	@RequestMapping(value = "/link", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/urls", method = RequestMethod.POST)
 	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
 											  @RequestParam("date") String date,
 											  @RequestParam("time") String time,
