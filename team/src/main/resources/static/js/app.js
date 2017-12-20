@@ -107,7 +107,8 @@ $(document).ready(() => {
 
       },
       error() {
-        $('#result').html("<div class='alert alert-danger lead'>ERROR</div>");
+          modal.style.display = "none";
+        $('#result').html("<div class='alert alert-danger lead'>Um... Well... Something didn't go as planned.</br>Maybe try again?</div>");
       },
     });
   });
@@ -155,7 +156,7 @@ $(document).ready(() => {
                       + "<td>" + platform.users + "</td>");
               // language=HTML
               $('#result').html(`
-                <div class="container">
+                <div style="background-color:rgba(255, 255, 255, 0.5)" class="container">
                     
                     <div class="panel panel-group text-center">
                         <h2>URL ID Access Stats:</h2>

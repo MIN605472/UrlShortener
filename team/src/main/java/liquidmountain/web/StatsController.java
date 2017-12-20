@@ -81,7 +81,10 @@ public class StatsController {
                 if (countryExists && !ips.contains(click.getIp())) {
                     urlStats.countries.get(countryWhere).setUsers(urlStats.countries.get(countryWhere).getUsers() + 1);
                 } else if (!countryExists) {
-                    urlStats.countries.add(countryCursor, new DataStat(click.getCountry(), 1));
+                    if(click.getCountry() == null) {
+                        urlStats.countries.add(countryCursor, new DataStat("Unknown", 1));
+                    } else urlStats.countries.add(countryCursor, new DataStat(click.getCountry(), 1));
+
                     countryCursor++;
                 }
                 if (browserExists && !ips.contains(click.getIp())) {

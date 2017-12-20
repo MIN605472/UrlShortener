@@ -155,18 +155,25 @@ public class UrlShortenerController {
 										  String owner, String ip, Date expirationDate, Time expirationTime) {
 		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
 		boolean isSafe = googleSafe.isSafe(url);
+		UUID uuid = UUID.randomUUID();
 
 		UrlValidatorAndCheckerImpl urlValidatorAndChecker = new UrlValidatorAndCheckerImpl(url);
 		if (urlValidatorAndChecker.execute()) {
+//			String id = Hashing.murmur3_32()
+//					.hashString(url, StandardCharsets.UTF_8).toString();
 			String id = Hashing.murmur3_32()
-					.hashString(url, StandardCharsets.UTF_8).toString();
+					.hashString(uuid.toString(), StandardCharsets.UTF_8).toString();
 			ShortURL su = new ShortURL(id, url,
 					linkTo(
 							methodOn(UrlShortenerController.class).redirectTo(
 									id, null)).toUri(), sponsor, new Date(
 					System.currentTimeMillis()), owner,
 					HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null, expirationDate, expirationTime);
-			return shortURLRepository.save(su);
+			ShortURL old = shortURLRepository.findByKey(su.getHash());
+			if(old != null){
+				shortURLRepository.update(su);
+				return su;
+			} return shortURLRepository.save(su);
 		} else {
 			return null;
 		}
