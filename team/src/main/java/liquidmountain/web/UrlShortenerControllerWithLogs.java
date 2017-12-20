@@ -4,9 +4,7 @@ import liquidmountain.domain.ShortURL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,5 +27,17 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
                                               HttpServletRequest request) {
         logger.info("Requested new short for uri " + url + " with expiration date " + date + " y hora " + time);
         return super.shortener(url, date, time, sponsor, request);
+    }
+
+    @Override
+    public ResponseEntity<String> verify(@RequestParam("url") String url, HttpServletRequest request) {
+        logger.info("Requested verification of url " + url);
+        return super.verify(url, request);
+    }
+
+    @Override
+    public ResponseEntity<String> checkSafe(@RequestParam("url") String url, HttpServletRequest request) {
+        logger.info("Requested safety of url " + url);
+        return super.checkSafe(url, request);
     }
 }
