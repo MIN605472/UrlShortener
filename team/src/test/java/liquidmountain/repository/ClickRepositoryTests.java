@@ -1,10 +1,7 @@
-package liquidmountain.common.repository;
+package liquidmountain.repository;
 
-import liquidmountain.common.repository.fixture.ClickFixture;
-import liquidmountain.repository.ClickRepository;
-import liquidmountain.repository.ClickRepositoryImpl;
-import liquidmountain.repository.ShortURLRepository;
-import liquidmountain.repository.ShortURLRepositoryImpl;
+import liquidmountain.repository.fixture.ClickFixture;
+import liquidmountain.repository.fixture.ShortURLFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +10,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
 import liquidmountain.domain.Click;
-import liquidmountain.common.repository.fixture.ShortURLFixture;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

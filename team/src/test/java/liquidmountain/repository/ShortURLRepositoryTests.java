@@ -1,10 +1,8 @@
-package liquidmountain.common.repository;
+package liquidmountain.repository;
 
-import liquidmountain.repository.ShortURLRepository;
-import liquidmountain.repository.ShortURLRepositoryImpl;
+import liquidmountain.repository.fixture.ShortURLFixture;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -19,13 +17,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.HSQL;
-import static liquidmountain.common.repository.fixture.ShortURLFixture.badUrl;
-import static liquidmountain.common.repository.fixture.ShortURLFixture.url1;
-import static liquidmountain.common.repository.fixture.ShortURLFixture.url1modified;
-import static liquidmountain.common.repository.fixture.ShortURLFixture.url2;
-import static liquidmountain.common.repository.fixture.ShortURLFixture.url3;
-import static liquidmountain.common.repository.fixture.ShortURLFixture.urlSafe;
-import static liquidmountain.common.repository.fixture.ShortURLFixture.urlSponsor;
 
 public class ShortURLRepositoryTests {
 
@@ -43,29 +34,29 @@ public class ShortURLRepositoryTests {
 
 	@Test
 	public void thatSavePersistsTheShortURL() {
-		assertNotNull(repository.save(url1()));
+		assertNotNull(repository.save(ShortURLFixture.url1()));
 		assertSame(jdbc.queryForObject("select count(*) from SHORTURL",
 				Integer.class), 1);
 	}
 
 	@Test
 	public void thatSaveSponsor() {
-		assertNotNull(repository.save(urlSponsor()));
+		assertNotNull(repository.save(ShortURLFixture.urlSponsor()));
 		assertSame(jdbc.queryForObject("select sponsor from SHORTURL",
-				String.class), urlSponsor().getSponsor());
+				String.class), ShortURLFixture.urlSponsor().getSponsor());
 	}
 
 	@Test
 	public void thatSaveSafe() {
-		assertNotNull(repository.save(urlSafe()));
+		assertNotNull(repository.save(ShortURLFixture.urlSafe()));
 		assertSame(
 				jdbc.queryForObject("select safe from SHORTURL", Boolean.class),
 				true);
-		repository.mark(urlSafe(), false);
+		repository.mark(ShortURLFixture.urlSafe(), false);
 		assertSame(
 				jdbc.queryForObject("select safe from SHORTURL", Boolean.class),
 				false);
-		repository.mark(urlSafe(), true);
+		repository.mark(ShortURLFixture.urlSafe(), true);
 		assertSame(
 				jdbc.queryForObject("select safe from SHORTURL", Boolean.class),
 				true);
@@ -73,42 +64,42 @@ public class ShortURLRepositoryTests {
 
 	@Test
 	public void thatSaveADuplicateHashIsSafelyIgnored() {
-		repository.save(url1());
-		assertNotNull(repository.save(url1()));
+		repository.save(ShortURLFixture.url1());
+		assertNotNull(repository.save(ShortURLFixture.url1()));
 		assertSame(jdbc.queryForObject("select count(*) from SHORTURL",
 				Integer.class), 1);
 	}
 
 	@Test
 	public void thatErrorsInSaveReturnsNull() {
-		assertNull(repository.save(badUrl()));
+		assertNull(repository.save(ShortURLFixture.badUrl()));
 		assertSame(jdbc.queryForObject("select count(*) from SHORTURL",
 				Integer.class), 0);
 	}
 
 	@Test
 	public void thatFindByKeyReturnsAURL() {
-		repository.save(url1());
-		repository.save(url2());
-		ShortURL su = repository.findByKey(url1().getHash());
+		repository.save(ShortURLFixture.url1());
+		repository.save(ShortURLFixture.url2());
+		ShortURL su = repository.findByKey(ShortURLFixture.url1().getHash());
 		assertNotNull(su);
-		assertSame(su.getHash(), url1().getHash());
+		assertSame(su.getHash(), ShortURLFixture.url1().getHash());
 	}
 
 	@Test
 	public void thatFindByKeyReturnsNullWhenFails() {
-		repository.save(url1());
-		assertNull(repository.findByKey(url2().getHash()));
+		repository.save(ShortURLFixture.url1());
+		assertNull(repository.findByKey(ShortURLFixture.url2().getHash()));
 	}
 
 	@Test
 	public void thatFindByTargetReturnsURLs() {
-		repository.save(url1());
-		repository.save(url2());
-		repository.save(url3());
-		List<ShortURL> sul = repository.findByTarget(url1().getTarget());
+		repository.save(ShortURLFixture.url1());
+		repository.save(ShortURLFixture.url2());
+		repository.save(ShortURLFixture.url3());
+		List<ShortURL> sul = repository.findByTarget(ShortURLFixture.url1().getTarget());
 		assertEquals(sul.size(), 2);
-		sul = repository.findByTarget(url3().getTarget());
+		sul = repository.findByTarget(ShortURLFixture.url3().getTarget());
 		assertEquals(sul.size(), 1);
 		sul = repository.findByTarget("dummy");
 		assertEquals(sul.size(), 0);
@@ -116,21 +107,21 @@ public class ShortURLRepositoryTests {
 	
 	@Test
 	public void thatDeleteDelete() {
-		repository.save(url1());
-		repository.save(url2());
-		repository.delete(url1().getHash());
+		repository.save(ShortURLFixture.url1());
+		repository.save(ShortURLFixture.url2());
+		repository.delete(ShortURLFixture.url1().getHash());
 		assertEquals(repository.count().intValue(), 1);
-		repository.delete(url2().getHash());
+		repository.delete(ShortURLFixture.url2().getHash());
 		assertEquals(repository.count().intValue(), 0);
 	}
 
 	@Test
 	public void thatUpdateUpdate() {
-		repository.save(url1());
-		ShortURL su = repository.findByKey(url1().getHash());
+		repository.save(ShortURLFixture.url1());
+		ShortURL su = repository.findByKey(ShortURLFixture.url1().getHash());
 		assertEquals(su.getTarget(), "http://www.unizar.es/");
-		repository.update(url1modified());
-		su = repository.findByKey(url1().getHash());
+		repository.update(ShortURLFixture.url1modified());
+		su = repository.findByKey(ShortURLFixture.url1().getHash());
 		assertEquals(su.getTarget(), "http://www.unizar.org/");
 	}
 	
