@@ -87,29 +87,102 @@ function logoChangeHandler(qrNumber) {
   };
 }
 
+function setSpinners() {
+    let safeIconn = document.getElementById('safeIcon');
+    let verifyIconn = document.getElementById('verifiedIcon');
+    let loadingIconn = document.getElementById('loadingIcon');
+    safeIconn.setAttribute('data-icon', 'spinner');
+    safeIconn.classList.add('fa-spin');
+    verifyIconn.setAttribute('data-icon', 'spinner');
+    verifyIconn.classList.add('fa-spin');
+    loadingIconn.setAttribute('data-icon', 'spinner');
+    loadingIconn.classList.add('fa-spin');
+}
 // Get the modal
 let modal = document.getElementById('myModal');
+let safeIcon;
+let verifyIcon;
+let loadingIcon;
+let isSafe = false;
+let isVerified = false;
 
 $(document).ready(() => {
   $('#shortener').submit((event) => {
     modal.style.display = "block";
     event.preventDefault();
       $.ajax({
-      url: '/link',
+      url: '/api/safe',
       type: 'POST',
       data: $(event.currentTarget).serialize(),
       success(msg) {
-          modal.style.display = "none";
-          if(msg.expirationDate.substring(0, 1) !== "3"){
-              $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></br><p>The link will expire ${msg.expirationDate} at ${msg.expirationTime}</p></div>`);
+          safeIcon = document.getElementById('safeIcon');
+          if(msg === 'SAFE'){
+              safeIcon.setAttribute('data-icon', 'check');
+              safeIcon.classList.remove('fa-spin');
+              isSafe = true;
+              $.ajax({
+                  url: '/api/verify',
+                  type: 'POST',
+                  data: $(event.currentTarget).serialize(),
+                  success(msg) {
+                      verifyIcon = document.getElementById('verifiedIcon');
+                      if(msg === 'SAFE') {
+                          verifyIcon.setAttribute('data-icon', 'check');
+                          verifyIcon.classList.remove('fa-spin');
+                          isVerified = true;
+                          $.ajax({
+                              url: 'api/urls',
+                              type: 'POST',
+                              data: $(event.currentTarget).serialize(),
+                              success(msg) {
+                                  loadingIcon = document.getElementById('loadingIcon');
+                                  loadingIcon.setAttribute('data-icon', 'check');
+                                  loadingIcon.classList.remove('fa-spin');
+                                  modal.style.display = "none";
+                                  setSpinners();
+                                  if(msg.expirationDate.substring(0, 1) !== "3"){
+                                      $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></br><p>The link will expire ${msg.expirationDate} at ${msg.expirationTime}</p></div>`);
+                                  }
+                                  else $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></div>`);
+                              },
+                              error() {
+                                  setSpinners();
+                                  modal.style.display = "none";
+                                  $('#result').html("<div class='alert alert-danger lead'>Um... Well... Something didn't go as planned.</br>Maybe try again?</div>");
+                              }
+                          });
+                      } else{
+                          setSpinners();
+                          modal.style.display = "none";
+                          $('#result').html("<div class='alert alert-danger lead'>Check your grammar, bro.</br>That URL is not correctly formed.</div>");
+                      }
+                  },
+                  error() {
+                      setSpinners();
+                      modal.style.display = "none";
+                      $('#result').html("<div class='alert alert-danger lead'>Um... Well... Something didn't go as planned.</br>Maybe try again?</div>");
+                  }
+              });
           }
-          else $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></div>`);
+          else {
+              setSpinners();
+              modal.style.display = "none";
+              $('#result').html("<div class='alert alert-danger lead'>Ok, stop right there!</br>Your URL seems insecure, no way we're shortening that.</div>");
+          }
 
       },
       error() {
-        $('#result').html("<div class='alert alert-danger lead'>ERROR</div>");
+          setSpinners();
+          modal.style.display = "none";
+        $('#result').html("<div class='alert alert-danger lead'>Um... Well... Something didn't go as planned.</br>Maybe try again?</div>");
       },
     });
+
+      if(isSafe && isVerified) {
+
+
+      }
+
   });
 
   $('#generate-new-qr').click(() => {
@@ -155,7 +228,7 @@ $(document).ready(() => {
                       + "<td>" + platform.users + "</td>");
               // language=HTML
               $('#result').html(`
-                <div class="container">
+                <div style="background-color:rgba(255, 255, 255, 0.5)" class="container">
                     
                     <div class="panel panel-group text-center">
                         <h2>URL ID Access Stats:</h2>

@@ -11,14 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,24 +31,24 @@ public class StatsController {
     @Autowired
     protected ClickRepository clickRepository;
 
-    @RequestMapping(value = "/api/stats/{id:(?!link).*}", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/stats/{id:.+}", method = RequestMethod.GET)
     public ResponseEntity<URLStats> showStats(@PathVariable String id,
                                               HttpServletRequest request) {
-        if(id.contains("url="))
+        if (id.contains("url="))
             id = id.replace("url=", "");
         LOG.info("Requested stats with hash " + id);
         HttpHeaders h = new HttpHeaders();
         List<Click> clicks = clickRepository.findByHash(id);
         //List<List<DataStat>> urlStats; // 0 = countries, 1 = browsers, 2 = platforms
         URLStats urlStats = new URLStats();
-        int countryCursor= 0;
-        int browserCursor= 0;
-        int platformCursor= 0;
+        int countryCursor = 0;
+        int browserCursor = 0;
+        int platformCursor = 0;
         List<String> ips = new ArrayList<>();
-        if(clicks.size() > 0) {
+        if (clicks.size() > 0) {
             // Aggregate the data
             for (Click click : clicks) {
-                if(!ips.contains(click.getIp())){
+                if (!ips.contains(click.getIp())) {
                     ips.add(click.getIp());
                 }
                 boolean countryExists = false;
@@ -82,19 +80,23 @@ public class StatsController {
                 }
                 if (countryExists && !ips.contains(click.getIp())) {
                     urlStats.countries.get(countryWhere).setUsers(urlStats.countries.get(countryWhere).getUsers() + 1);
-                } else if(!countryExists){
-                    urlStats.countries.add(countryCursor, new DataStat(click.getCountry(), 1));
+                } else if (!countryExists) {
+                    if(click.getCountry() == null) {
+                        urlStats.countries.add(countryCursor, new DataStat("Unknown", 1));
+                    } else urlStats.countries.add(countryCursor, new DataStat(click.getCountry(), 1));
+
                     countryCursor++;
                 }
-                if (browserExists  && !ips.contains(click.getIp())) {
+                if (browserExists && !ips.contains(click.getIp())) {
                     urlStats.browsers.get(browserWhere).setUsers(urlStats.browsers.get(browserWhere).getUsers() + 1);
-                } else if(!browserExists){
+                } else if (!browserExists) {
                     urlStats.browsers.add(browserCursor, new DataStat(click.getBrowser(), 1));
                     browserCursor++;
                 }
-                if (platformExists  && !ips.contains(click.getIp())) {
-                    urlStats.platforms.get(platformWhere).setUsers(urlStats.platforms.get(platformWhere).getUsers() + 1);
-                } else if(!platformExists){
+                if (platformExists && !ips.contains(click.getIp())) {
+                    urlStats.platforms.get(platformWhere).setUsers(urlStats.platforms.get(platformWhere).getUsers() +
+                            1);
+                } else if (!platformExists) {
                     urlStats.platforms.add(platformCursor, new DataStat(click.getPlatform(), 1));
                     platformCursor++;
                 }
