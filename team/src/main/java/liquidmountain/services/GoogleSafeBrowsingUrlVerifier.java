@@ -2,6 +2,7 @@ package liquidmountain.services;
 
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import javax.ws.rs.client.Client;
@@ -12,8 +13,9 @@ import javax.ws.rs.core.Response;
 
 public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
 
-    @Value("${google.api_key}")
-    private String API_KEY;
+//    @Value("${google.api_key}")
+    private String API_KEY = "";
+
 
     public GoogleSafeBrowsingUrlVerifier() {}
 
