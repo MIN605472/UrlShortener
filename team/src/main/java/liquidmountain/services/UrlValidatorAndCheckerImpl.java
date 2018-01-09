@@ -4,6 +4,7 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -39,7 +40,7 @@ public class UrlValidatorAndCheckerImpl extends HystrixCommand<Boolean> implemen
             valid = false;
             msg = "Parece que " + url + " no esta bien formada!";
         }
-        System.out.println(msg);
+//        System.out.println(msg);
         return (valid && alive);
     }
 
