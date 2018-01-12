@@ -1,17 +1,22 @@
-package liquidmountain.common.services;
+package liquidmountain.services;
 
-import liquidmountain.services.UrlValidatorAndChecker;
-import liquidmountain.services.UrlValidatorAndCheckerImpl;
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
-public class UrlValidatorAndCheckerTests {
+public class UrlValidatorAndCheckerImplTest {
+    /*@Test
+    public void run() throws Exception {
+        UrlValidatorAndCheckerImpl validator1 = new UrlValidatorAndCheckerImpl("http://example.com");
+        UrlValidatorAndCheckerImpl validator2 = new UrlValidatorAndCheckerImpl("hps:/example.com");
+        Boolean valid1 = validator1.execute();
+        Boolean valid2 = validator2.execute();
+        assertTrue(valid1);
+        assertFalse(valid2);
+    }*/
 
     @Test
-    public void thatIsValidWorked(){
+    public void isValid() throws Exception {
         UrlValidatorAndCheckerImpl validator1 = new UrlValidatorAndCheckerImpl("https://twitter.com");
         UrlValidatorAndCheckerImpl validator2 = new UrlValidatorAndCheckerImpl("hps:/twitter.com");
         Boolean valid1 = validator1.isValid(validator1.url);
@@ -21,7 +26,7 @@ public class UrlValidatorAndCheckerTests {
     }
 
     @Test
-    public void thatIsAliveWorked(){
+    public void isAlive() throws Exception {
         UrlValidatorAndCheckerImpl validator1 = new UrlValidatorAndCheckerImpl("https://twitter.com");
         UrlValidatorAndCheckerImpl validator2 = new UrlValidatorAndCheckerImpl("https://twitter.com/pccmponentes");
         Boolean valid1 = validator1.isAlive(validator1.url);
@@ -30,13 +35,4 @@ public class UrlValidatorAndCheckerTests {
         assertFalse(valid2);
     }
 
-    @Test
-    public void thatValidatorWorked(){
-        UrlValidatorAndCheckerImpl validator1 = new UrlValidatorAndCheckerImpl("https://twitter.com");
-        UrlValidatorAndCheckerImpl validator2 = new UrlValidatorAndCheckerImpl("hps:/twitter.com");
-        Boolean valid1 = validator1.execute();
-        Boolean valid2 = validator2.execute();
-        assertTrue(valid1);
-        assertFalse(valid2);
-    }
 }
