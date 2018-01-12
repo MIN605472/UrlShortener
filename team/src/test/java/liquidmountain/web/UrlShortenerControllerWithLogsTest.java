@@ -1,5 +1,8 @@
 package liquidmountain.web;
 
+import liquidmountain.domain.ShortURL;
+import liquidmountain.repository.ClickRepository;
+import liquidmountain.repository.ShortURLRepository;
 import liquidmountain.web.fixture.ShortURLFixture;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,24 +12,21 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import liquidmountain.domain.ShortURL;
-import liquidmountain.repository.ClickRepository;
-import liquidmountain.repository.ShortURLRepository;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.matches;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class UrlShortenerTests {
-
+public class UrlShortenerControllerWithLogsTest {
     private MockMvc mockMvc;
 
     @Mock
@@ -36,7 +36,7 @@ public class UrlShortenerTests {
     private ShortURLRepository shortURLRepository;
 
     @InjectMocks
-    private UrlShortenerController urlShortener;
+    private UrlShortenerControllerWithLogs urlShortener;
 
     @Before
     public void setup() {
@@ -45,8 +45,8 @@ public class UrlShortenerTests {
     }
 
     @Test
-    public void thatRedirectToReturnsTemporaryRedirectIfKeyExists()
-            throws Exception {
+    public void redirectToSuccess() throws Exception {
+        //Key exists, so redirect
         when(shortURLRepository.findByKey("someKey")).thenReturn(ShortURLFixture.someUrl());
         when(clickRepository.save(any())).thenAnswer((InvocationOnMock invocation) -> invocation.getArguments()[0]);
 
@@ -56,8 +56,8 @@ public class UrlShortenerTests {
     }
 
     @Test
-    public void thatRedirecToReturnsNotFoundIdIfKeyDoesNotExist()
-            throws Exception {
+    public void redirectToFails() throws Exception {
+        //Key doesn't exists, so no redirect
         when(shortURLRepository.findByKey("someKey")).thenReturn(null);
 
         mockMvc.perform(get("/{id}", "someKey")).andDo(print())
@@ -65,11 +65,11 @@ public class UrlShortenerTests {
     }
 
     @Test
-    public void thatShortenerCreatesARedirectIfTheURLisOK() throws Exception {
+    public void shortenerSuccess() throws Exception {
         configureTransparentSave();
 
         mockMvc.perform(post("/api/urls").param("url", "http://example.com/").param(
-                "date", "2017-12-12").param("time", "10:10"))
+                "date", "2018-12-12").param("time", "10:10"))
                 .andDo(print())
                 //.andExpect(redirectedUrl("http://localhost/f684a3c4"))
                 .andExpect(status().isCreated())
@@ -80,33 +80,8 @@ public class UrlShortenerTests {
     }
 
     @Test
-    public void thatShortenerCreatesARedirectWithSponsor() throws Exception {
+    public void shortenerFail() throws Exception{
         configureTransparentSave();
-
-        mockMvc.perform(
-                post("/api/urls").param("url", "http://example.com/").param(
-                        "sponsor", "http://sponsor.com/").param("date",
-                        "2018-12-12").param("time", "10:10")).andDo(print())
-                //.andExpect(redirectedUrl("http://localhost/f684a3c4"))
-                .andExpect(status().isCreated())
-                //.andExpect(jsonPath("$.hash", is("f684a3c4")))
-                //.andExpect(jsonPath("$.uri", is("http://localhost/f684a3c4")))
-                .andExpect(jsonPath("$.target", is("http://example.com/")))
-                .andExpect(jsonPath("$.sponsor", is("http://sponsor.com/")));
-    }
-
-    @Test
-    public void thatShortenerFailsIfTheURLisWrong() throws Exception {
-        configureTransparentSave();
-
-        mockMvc.perform(post("/api/urls").param("url", "someKey")).andDo(print())
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void thatShortenerFailsIfTheRepositoryReturnsNull() throws Exception {
-        when(shortURLRepository.save(any(ShortURL.class)))
-                .thenReturn(null);
 
         mockMvc.perform(post("/api/urls").param("url", "someKey")).andDo(print())
                 .andExpect(status().isBadRequest());
