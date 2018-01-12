@@ -1,22 +1,20 @@
 package liquidmountain.web;
 
 import com.google.common.hash.Hashing;
-import liquidmountain.services.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import liquidmountain.domain.Click;
 import liquidmountain.domain.ShortURL;
 import liquidmountain.repository.ClickRepository;
 import liquidmountain.repository.ShortURLRepository;
+import liquidmountain.services.ExtractInfo;
+import liquidmountain.services.GoogleSafeBrowsingUrlVerifier;
+import liquidmountain.services.UrlValidatorAndCheckerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -46,9 +44,9 @@ public class UrlShortenerController {
 	@Autowired
 	protected ExtractInfo extractInfo;
 
-	@RequestMapping(value = "/{id:(?!link).*}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id:[a-zA-Z0-9]+(?!\\.html)}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id,
-			HttpServletRequest request) {
+										HttpServletRequest request) {
 		ShortURL l = shortURLRepository.findByKey(id);
 		if(l != null){
 			// Construct date and time objects
@@ -110,13 +108,31 @@ public class UrlShortenerController {
 		return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
 	}
 
-	@RequestMapping(value = "/link", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/verify", method = RequestMethod.POST)
+	public ResponseEntity<String> verify(@RequestParam("url") String url, HttpServletRequest request) {
+		UrlValidatorAndCheckerImpl urlValidatorAndChecker = new UrlValidatorAndCheckerImpl(url);
+		HttpHeaders h = new HttpHeaders();
+		if(urlValidatorAndChecker.execute()){
+			return new ResponseEntity<>("SAFE", h, HttpStatus.OK);
+		} else return new ResponseEntity<>("UNSAFE", h, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/api/safe", method = RequestMethod.POST)
+	public ResponseEntity<String> checkSafe(@RequestParam("url") String url, HttpServletRequest request) {
+		GoogleSafeBrowsingUrlVerifier gSafe = new GoogleSafeBrowsingUrlVerifier();
+		HttpHeaders  h = new HttpHeaders();
+		System.out.println(gSafe.isSafe("http://www.google.es"));
+		if(gSafe.isSafe(url)){
+			return new ResponseEntity<>("SAFE", h, HttpStatus.OK);
+		} else return new ResponseEntity<>("UNSAFE", h, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/api/urls", method = RequestMethod.POST)
 	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
 											  @RequestParam("date") String date,
 											  @RequestParam("time") String time,
 											  @RequestParam(value = "sponsor", required = false) String sponsor,
 											  HttpServletRequest request) {
-
 		ExtractInfo ex = new ExtractInfo();
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		DateFormat sdft = new SimpleDateFormat("HH:mm");
@@ -141,12 +157,7 @@ public class UrlShortenerController {
 
 		ShortURL su = createAndSaveIfValid(url, sponsor, UUID
 				.randomUUID().toString(), ex.extractIP(request), d, t);
-
-		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
-
-		boolean isSafe = googleSafe.isSafe(url);
-
-		if (su != null && isSafe) {
+		if (su != null) {
 			HttpHeaders h = new HttpHeaders();
 			h.setLocation(su.getUri());
 			return new ResponseEntity<>(su, h, HttpStatus.CREATED);
@@ -157,22 +168,27 @@ public class UrlShortenerController {
 
 	private ShortURL createAndSaveIfValid(String url, String sponsor,
 										  String owner, String ip, Date expirationDate, Time expirationTime) {
+		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
+		boolean isSafe = googleSafe.isSafe(url);
+		UUID uuid = UUID.randomUUID();
 
-		UrlValidatorAndChecker urlValidatorAndChecker = new UrlValidatorAndCheckerImpl();
-		if (urlValidatorAndChecker.isValid(url)) {
-			if (urlValidatorAndChecker.isAlive(url)) {
-				String id = Hashing.murmur3_32()
-						.hashString(url, StandardCharsets.UTF_8).toString();
-				ShortURL su = new ShortURL(id, url,
-						linkTo(
-								methodOn(UrlShortenerController.class).redirectTo(
-										id, null)).toUri(), sponsor, new Date(
-						System.currentTimeMillis()), owner,
-						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null, expirationDate, expirationTime);
-				return shortURLRepository.save(su);
-			} else{
-				return null;
-			}
+		UrlValidatorAndCheckerImpl urlValidatorAndChecker = new UrlValidatorAndCheckerImpl(url);
+		if (urlValidatorAndChecker.execute()) {
+//			String id = Hashing.murmur3_32()
+//					.hashString(url, StandardCharsets.UTF_8).toString();
+			String id = Hashing.murmur3_32()
+					.hashString(uuid.toString(), StandardCharsets.UTF_8).toString();
+			ShortURL su = new ShortURL(id, url,
+					linkTo(
+							methodOn(UrlShortenerController.class).redirectTo(
+									id, null)).toUri(), sponsor, new Date(
+					System.currentTimeMillis()), owner,
+					HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null, expirationDate, expirationTime);
+			ShortURL old = shortURLRepository.findByKey(su.getHash());
+			if(old != null){
+				shortURLRepository.update(su);
+				return su;
+			} return shortURLRepository.save(su);
 		} else {
 			return null;
 		}

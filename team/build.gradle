@@ -15,6 +15,7 @@ dependencies {
 
     compile 'org.webjars:bootstrap:3.3.5'
     compile 'org.webjars:jquery:2.1.4'
+    compile 'com.google.apis:google-api-services-safebrowsing:v4-rev38-1.23.0'
 
     // Testing framework
     testCompile 'org.springframework.boot:spring-boot-starter-test'
@@ -33,4 +34,6 @@ dependencies {
     compile 'com.google.guava:guava:23.0'
 
     testRuntime 'org.hsqldb:hsqldb'
+
+    compile 'org.springframework.cloud:spring-cloud-starter-hystrix:1.4.0.RELEASE'
 }
