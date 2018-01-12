@@ -40,4 +40,5 @@ dependencies {
     compile("io.springfox:springfox-swagger-ui:2.0.2")
 
     compile 'org.springframework.cloud:spring-cloud-starter-hystrix:1.4.0.RELEASE'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
 }
