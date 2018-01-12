@@ -46,42 +46,32 @@ const qrCardTemplate = qrNumber => `
 function qrGeneratorHandler(qrNumber) {
   return (ev) => {
     ev.preventDefault();
-    const data = $("input[name='url']").val();
-    if (data) {
-      const logoFileValue = $(`#qr-logo-file-${qrNumber}`).val();
-      const logoId = logoFileValue || null;
-      const fgColor = $(`#qr-foreground-color-${qrNumber}`).val();
-      const config = {
-        bodyColor: fgColor,
-        bgColor: $(`#qr-background-color-${qrNumber}`).val(),
-        eye1Color: fgColor,
-        eye2Color: fgColor,
-        eye3Color: fgColor,
-        eyeBall1Color: fgColor,
-        eyeBall2Color: fgColor,
-        eyeBall3Color: fgColor,
-        logo: logoId,
-      };
-      const configStr = JSON.stringify(config);
-      const url = `https://qr-generator.qrcode.studio/qr/custom?data=${encodeURIComponent(data)}&config=${encodeURIComponent(configStr)}`;
-      $(`#qr-img-${qrNumber}`).attr('src', url);
-    }
+    const params = {
+      url: $("input[name='url']").val(),
+      fg: $(`#qr-foreground-color-${qrNumber}`).val(),
+      bg: $(`#qr-background-color-${qrNumber}`).val(),
+      id: $(`#qr-logo-file-${qrNumber}`).val() || null
+    };
+    const strParams = jQuery.param(params);
+    const url = `http://localhost:8080/api/qrs?${strParams}`;
+    $(`#qr-img-${qrNumber}`).attr('src', url);
   };
 }
 
 function logoChangeHandler(qrNumber) {
   return (ev) => {
+    ev.preventDefault();
     const formData = new FormData();
-    formData.append('file', ev.target.files[0]);
+    formData.append('logoImg', ev.target.files[0]);
     $.ajax({
-      url: 'https://qr-generator.qrcode.studio/qr/uploadimage',
+      url: 'http://localhost:8080/api/logos',
       method: 'POST',
       contentType: false,
       data: formData,
       dataType: 'json',
       processData: false,
       success(msg) {
-        $(`#qr-logo-file-${qrNumber}`).val(msg.file);
+        $(`#qr-logo-file-${qrNumber}`).val(msg.id);
       },
     });
   };
