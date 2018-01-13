@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -106,6 +107,23 @@ public class UrlShortenerController {
 		HttpHeaders h = new HttpHeaders();
 		h.setLocation(URI.create(l.getTarget()));
 		return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
+	}
+
+	@RequestMapping(value = "/api/test", method = RequestMethod.GET)
+	public void test() {
+		LOG.info("Checking if links still safe");
+		GoogleSafeBrowsingUrlVerifier googleSafeBrowsingUrlVerifier = new GoogleSafeBrowsingUrlVerifier();
+		List<ShortURL> urlList = shortURLRepository.listAll();
+		for(ShortURL s : urlList) {
+			if(!googleSafeBrowsingUrlVerifier.isSafe(s.getTarget())){
+				LOG.info("URL {} not safe anymore.", s.getTarget());
+				s.setSafe(false);
+				s.setMode(HttpStatus.GONE.value());
+			} else{
+				s.setSafe(true);
+				s.setMode(HttpStatus.TEMPORARY_REDIRECT.value());
+			}
+		}
 	}
 
 	@RequestMapping(value = "/api/verify", method = RequestMethod.POST)

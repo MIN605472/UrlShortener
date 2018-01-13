@@ -41,46 +41,59 @@ public class ScheduledTasks {
     @Scheduled(fixedRate = 30 * 60 * 1000)
     public void CheckSafe() {
         log.info("Checking if links still safe");
-        googleSafeBrowsingUrlVerifier = new GoogleSafeBrowsingUrlVerifier();
-        for(ShortURL s : urlList) {
-            if(!googleSafeBrowsingUrlVerifier.isSafe(s.getTarget())){
-                log.info("URL {} not safe anymore.", s.getTarget());
-                s.setSafe(false);
-                s.setMode(HttpStatus.GONE.value());
-            } else{
-                s.setSafe(true);
-                s.setMode(HttpStatus.TEMPORARY_REDIRECT.value());
+        try {
+            googleSafeBrowsingUrlVerifier = new GoogleSafeBrowsingUrlVerifier();
+            for(ShortURL s : urlList) {
+                if(!googleSafeBrowsingUrlVerifier.isSafe(s.getTarget())){
+                    log.info("URL {} not safe anymore.", s.getTarget());
+                    s.setSafe(false);
+                    s.setMode(HttpStatus.GONE.value());
+                } else{
+                    s.setSafe(true);
+                    s.setMode(HttpStatus.TEMPORARY_REDIRECT.value());
+                }
             }
+        } catch( NullPointerException e) {
+            //No se ha inicializado aun
         }
     }
 
     @Scheduled(fixedRate = checkRate)
     public void CheckValidated() {
         log.info("Checking if links still valid and alive");
-        for(ShortURL s : urlList) {
-            UrlValidatorAndCheckerImpl urlValidatorAndChecker = new UrlValidatorAndCheckerImpl(s.getTarget());
-            if(!urlValidatorAndChecker.execute()){
-                log.info("URL {} dead or not valid anymore.", s.getTarget());
-                s.setMode(HttpStatus.GONE.value());
-            } else{
-                s.setMode(HttpStatus.TEMPORARY_REDIRECT.value());
+        try{
+            for(ShortURL s : urlList) {
+                UrlValidatorAndCheckerImpl urlValidatorAndChecker = new UrlValidatorAndCheckerImpl(s.getTarget());
+                if(!urlValidatorAndChecker.execute()){
+                    log.info("URL {} dead or not valid anymore.", s.getTarget());
+                    s.setMode(HttpStatus.GONE.value());
+                } else{
+                    s.setMode(HttpStatus.TEMPORARY_REDIRECT.value());
+                }
             }
+        } catch( NullPointerException e) {
+            //No se ha inicializado aun
         }
     }
 
     @Scheduled(fixedRate = checkRate)
     public void CheckExpired() {
         log.info("Checking if links expired");
-        for(ShortURL s : urlList) {
-            // Si la fecha guardada es antes que este momento
-            Date then1 = s.getExpirationDate();
-            java.util.Date then2= new java.util.Date(then1.getTime());
-            Instant then = then2.toInstant();
-            Instant now = ZonedDateTime.now().toInstant();
-            if(then.isBefore(now)){
-                log.info("URL {} expired.", s.getUri().toString());
-                s.setMode(HttpStatus.GONE.value());
+        try {
+            for(ShortURL s : urlList) {
+                // Si la fecha guardada es antes que este momento
+                Date then1 = s.getExpirationDate();
+                java.util.Date then2= new java.util.Date(then1.getTime());
+                Instant then = then2.toInstant();
+                Instant now = ZonedDateTime.now().toInstant();
+                if(then.isBefore(now)){
+                    log.info("URL {} expired.", s.getUri().toString());
+                    s.setMode(HttpStatus.GONE.value());
+                }
             }
+        } catch( NullPointerException e) {
+            //No se ha inicializado aun
         }
+
     }
 }
