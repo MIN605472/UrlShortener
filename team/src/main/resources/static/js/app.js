@@ -185,7 +185,7 @@ $(document).ready(() => {
 
   });
 
-  $('#generate-new-qr').click(() => {
+    $('#generate-new-qr').click(() => {
     $('#qr-adder').before(qrCardTemplate(numberOfQrsGenerated));
     $(`#qr-generator-${numberOfQrsGenerated}`).submit(qrGeneratorHandler(numberOfQrsGenerated));
     $(`#qr-logo-${numberOfQrsGenerated}`).change(logoChangeHandler(numberOfQrsGenerated));
@@ -193,11 +193,11 @@ $(document).ready(() => {
     if (numberOfQrsGenerated > 2) {
       $('#qr-adder').remove();
     }
-  });
+    });
 
-  $('#goBackButton').click(() => {
+    $('#goBackButton').click(() => {
       window.location = "index.html"
-  });
+    });
 
     $('#statsButton').click(() => {
         window.location = "stats.html"
@@ -207,6 +207,76 @@ $(document).ready(() => {
         window.location = "index.html"
     });
 
+    function setCountryData(data) {
+        let countryChartJS = document.getElementById("countryChartJS");
+        let countryChart = new Chart(countryChartJS, { //TODO: error en esta linea, no se muestran las graficas
+            type: 'doughnut',
+            data: data,
+            options: {
+                title: {
+                    display: true,
+                    position: 'top',
+                    text: 'Countries'
+                },
+                legend: {
+                    display: false
+                },
+                responsive: true,
+                maintainAspectRatio: true,
+                animation: {
+                    animateRotate: true,
+                    animateScale: true
+                }
+            }
+        });
+    }
+    function setBrowserData(data) {
+        let browserChartJS = document.getElementById("browserChartJS");
+        let browserChart = new Chart(browserChartJS, {
+            type: 'doughnut',
+            data: data,
+            options: {
+                title: {
+                    display: true,
+                    position: 'top',
+                    text: 'Browsers'
+                },
+                legend: {
+                    display: false
+                },
+                responsive: true,
+                maintainAspectRatio: true,
+                animation: {
+                    animateRotate: true,
+                    animateScale: true
+                }
+            }
+        });
+    }
+    function setPlatformData(data) {
+        let platformChartJS = document.getElementById("platformChartJS");
+        let platformChart = new Chart(platformChartJS, {
+            type: 'doughnut',
+            data: data,
+            options: {
+                title: {
+                    display: true,
+                    position: 'top',
+                    text: 'Platforms'
+                },
+                legend: {
+                    display: false
+                },
+                responsive: true,
+                maintainAspectRatio: true,
+                animation: {
+                    animateRotate: true,
+                    animateScale: true
+                }
+            }
+        });
+    }
+
   $('#stats').submit((event) => {
       event.preventDefault();
       $.ajax({
@@ -214,62 +284,68 @@ $(document).ready(() => {
           type: 'GET',
           //data: $(event.currentTarget).serialize(),
           success(msg) {
-              let rowsCountry = '';
-              let rowsBrowser = '';
-              let rowsPlatform = '';
-              msg.countries.forEach((country) =>
-                  rowsCountry += "<td>" + country.data + "</td>"
-                      + "<td>" + country.users + "</td>");
-              msg.browsers.forEach((browser) =>
-                  rowsBrowser += "<td>" + browser.data + "</td>"
-                      + "<td>" + browser.users + "</td>");
-              msg.platforms.forEach((platform) =>
-                  rowsPlatform += "<td>" + platform.data + "</td>"
-                      + "<td>" + platform.users + "</td>");
-              // language=HTML
+              console.log(msg);
+              let countryData = {
+                  datasets: [{
+                      backgroundColor: "rgba(255,156,74,0.4)",
+                      borderColor: "rgba(255,156,74,1)",
+                      data: []
+                  }],
+                  // These labels appear in the legend and in the tooltips when hovering different arcs
+                  labels: []
+              };
+              let browserData = {
+                  datasets: [{
+                      backgroundColor: 'rgba(16,157,255,0.4)',
+                      borderColor: "rgba(16,157,255,1)",
+                      data: []
+                  }],
+                  // These labels appear in the legend and in the tooltips when hovering different arcs
+                  labels: []
+              };
+              let platformData = {
+                  datasets: [{
+                      backgroundColor: 'rgba(16,221,159,0.4)',
+                      borderColor: "rgba(16,221,159,1)",
+                      data: []
+                  }],
+                  // These labels appear in the legend and in the tooltips when hovering different arcs
+                  labels: []
+              };
+              msg.countries.forEach((country) => {
+                      countryData.datasets[0].data.push(country.users);
+                      countryData.labels.push(country.data);
+              });
+              msg.browsers.forEach((browser) => {
+                  browserData.datasets[0].data.push(browser.users);
+                  browserData.labels.push(browser.data);
+              });
+              msg.platforms.forEach((platform) => {
+                  platformData.datasets[0].data.push(platform.users);
+                  platformData.labels.push(platform.data);
+              });
               $('#result').html(`
-                <div style="background-color:rgba(255, 255, 255, 0.5)" class="container">
-                    
-                    <div class="panel panel-group text-center">
-                        <h2>URL ID Access Stats:</h2>
-                        <p>By country, browser and platform of access.</p>
-                        <table class="table table-hover text-center">
-                            <thead>
-                                <tr>
-                                    <th>Country</th>
-                                    <th>Users</th>
-                                </tr>
-                             </thead>
-                             <tbody>
-                                <tr>`
-                                + rowsCountry +
-                                `</tr>
-                            </tbody>
-                            <thead>
-                                <tr>
-                                    <th>Browser</th>
-                                    <th>Users</th>
-                                </tr>
-                             </thead>
-                             <tbody>
-                                <tr>`
-                                + rowsBrowser +
-                                `</tr>
-                            </tbody>
-                            <thead>
-                                <tr>
-                                    <th>Platform</th>
-                                    <th>Users</th>
-                                </tr>
-                             </thead>
-                             <tbody>
-                                <tr>`
-                                + rowsPlatform +
-                                `</tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>`);
+                    <div style="background-color:rgba(255, 255, 255, 0.5)" class="container">
+                        <div class="panel panel-group text-center">
+                            <h2>URL ID Access Stats:</h2>
+                            <div class="chart-container col-lg-12">
+                                <canvas id="countryChartJS"></canvas>
+                            </div>
+                            <div class="chart-container col-lg-12">
+                                <canvas id="browserChartJS"></canvas>
+                            </div>
+                            <div class="chart-container col-lg-12">
+                                <canvas id="platformChartJS"></canvas>
+                            </div>
+                        </div>
+                    </div>`);
+
+              console.log(countryData);
+              console.log(browserData);
+              console.log(platformData);
+              setCountryData(countryData);
+              setBrowserData(browserData);
+              setPlatformData(platformData);
           },
           error() {
               $('#result').html("<div class='alert alert-danger lead'>ERROR</div>");
