@@ -209,7 +209,7 @@ $(document).ready(() => {
 
     function setCountryData(data) {
         let countryChartJS = document.getElementById("countryChartJS");
-        let countryChart = new Chart(countryChartJS, { //TODO: error en esta linea, no se muestran las graficas
+        let countryChart = new Chart(countryChartJS, {
             type: 'doughnut',
             data: data,
             options: {
