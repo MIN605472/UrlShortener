@@ -1,6 +1,8 @@
 package liquidmountain.web;
 
 import com.google.common.hash.Hashing;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import liquidmountain.domain.Click;
 import liquidmountain.domain.ShortURL;
 import liquidmountain.repository.ClickRepository;
@@ -45,7 +47,8 @@ public class UrlShortenerController {
 	@Autowired
 	protected ExtractInfo extractInfo;
 
-	@RequestMapping(value = "/{id:[a-zA-Z0-9]+(?!\\.html)}", method = RequestMethod.GET)
+    @ApiOperation(value ="Reddirect")
+    @RequestMapping(value = "/{id:[a-zA-Z0-9]+(?!\\.html)}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id,
 										HttpServletRequest request) {
 		ShortURL l = shortURLRepository.findByKey(id);
@@ -109,7 +112,8 @@ public class UrlShortenerController {
 		return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
 	}
 
-	@RequestMapping(value = "/api/test", method = RequestMethod.GET)
+    @ApiOperation(value ="Check links still safe")
+    @RequestMapping(value = "/api/test", method = RequestMethod.GET)
 	public void test() {
 		LOG.info("Checking if links still safe");
 		GoogleSafeBrowsingUrlVerifier googleSafeBrowsingUrlVerifier = new GoogleSafeBrowsingUrlVerifier();
@@ -126,6 +130,7 @@ public class UrlShortenerController {
 		}
 	}
 
+    @ApiOperation(value ="Verify that a link is well formed and is valid")
 	@RequestMapping(value = "/api/verify", method = RequestMethod.POST)
 	public ResponseEntity<String> verify(@RequestParam("url") String url, HttpServletRequest request) {
 		UrlValidatorAndCheckerImpl urlValidatorAndChecker = new UrlValidatorAndCheckerImpl(url);
@@ -135,6 +140,7 @@ public class UrlShortenerController {
 		} else return new ResponseEntity<>("UNSAFE", h, HttpStatus.OK);
 	}
 
+    @ApiOperation(value ="Check link is safe")
 	@RequestMapping(value = "/api/safe", method = RequestMethod.POST)
 	public ResponseEntity<String> checkSafe(@RequestParam("url") String url, HttpServletRequest request) {
 		GoogleSafeBrowsingUrlVerifier gSafe = new GoogleSafeBrowsingUrlVerifier();
@@ -145,6 +151,7 @@ public class UrlShortenerController {
 		} else return new ResponseEntity<>("UNSAFE", h, HttpStatus.OK);
 	}
 
+    @ApiOperation(value ="Short and save one link")
 	@RequestMapping(value = "/api/urls", method = RequestMethod.POST)
 	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
 											  @RequestParam("date") String date,
