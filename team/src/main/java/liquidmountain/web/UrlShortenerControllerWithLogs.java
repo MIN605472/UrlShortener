@@ -1,5 +1,6 @@
 package liquidmountain.web;
 
+import io.swagger.annotations.Api;
 import liquidmountain.domain.ShortURL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
+@Api(value="api",description="Operations pertaining to URLS in Liquid Mountain")
 public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 
     private static final Logger logger = LoggerFactory.getLogger(UrlShortenerControllerWithLogs.class);

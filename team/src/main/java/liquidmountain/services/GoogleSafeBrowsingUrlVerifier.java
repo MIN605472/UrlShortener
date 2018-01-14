@@ -2,6 +2,8 @@ package liquidmountain.services;
 
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -11,13 +13,12 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+@Repository
 public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
 
 //    @Value("${google.api_key}")
     private String API_KEY = "";
 
-
-    public GoogleSafeBrowsingUrlVerifier() {}
 
     @Override
     public boolean isSafe(String url) {
@@ -27,7 +28,7 @@ public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
         try {
             Client client = ClientBuilder.newClient();
 
-            Response response = client.target("https://safebrowsing.googleapis.com/v4/threatMatches:find?key="+API_KEY)
+            Response response = client.target("https://safebrowsing.googleapis.com/v4/threatMatches:find?key=")
                     .request(MediaType.APPLICATION_JSON)
                     .post(Entity.entity("{\n" +
                             "    \"client\": {\n" +
@@ -43,8 +44,9 @@ public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
                             "    }\n" +
                             "  }",MediaType.APPLICATION_JSON));
 
-            System.out.println(response.getStatus());
-            if(response.getStatus()!=200){
+            String res = response.readEntity(String.class);
+
+            if(res.contains("matches")){
                 isSafeUrl = false;
             }
 

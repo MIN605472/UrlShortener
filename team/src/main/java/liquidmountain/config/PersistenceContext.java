@@ -4,7 +4,8 @@ import liquidmountain.repository.ClickRepository;
 import liquidmountain.repository.ClickRepositoryImpl;
 import liquidmountain.repository.ShortURLRepository;
 import liquidmountain.repository.ShortURLRepositoryImpl;
-import liquidmountain.services.ExtractInfo;
+import liquidmountain.services.GoogleSafeBrowsingUrlVerifier;
+import liquidmountain.services.UrlVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,8 +27,5 @@ public class PersistenceContext {
     ClickRepository clickRepository() {
         return new ClickRepositoryImpl(jdbc);
     }
-
-    @Bean
-    ExtractInfo extractInfo() {return new ExtractInfo();}
 
 }
