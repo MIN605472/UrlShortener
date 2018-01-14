@@ -21,8 +21,8 @@ public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
 
     /**
      * Check using google's api if @param is save
-     * @param url
-     * @return
+     * @param String url, url a comprobar si es segura
+     * @return boolean, true=segura, false=unsafe
      */
     @Override
     public boolean isSafe(String url) {

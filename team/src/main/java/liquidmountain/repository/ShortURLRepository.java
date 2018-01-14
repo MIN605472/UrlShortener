@@ -13,42 +13,42 @@ public interface ShortURLRepository {
 
 	/**
 	 * Find one ShortUrl by @param id
-	 * @param id
+	 * @param String id
 	 * @return ShortUrl
 	 */
 	ShortURL findByKey(String id);
 
 	/**
 	 * Find one ShortUrl by @target
-	 * @param target
+	 * @param String target
 	 * @return
 	 */
 	List<ShortURL> findByTarget(String target);
 
 	/**
 	 * Save one ShortUrl in bd
-	 * @param su
+	 * @param ShortURL su
 	 * @return the shortUrl saved
 	 */
 	ShortURL save(ShortURL su);
 
 	/**
 	 * Mark a url has @safeness
-	 * @param urlSafe true = safe/false = unsafe
-	 * @param safeness
+	 * @param ShortURL urlSafe
+	 * @param boolean safeness true = safe/false = unsafe
 	 * @return ShortUrl marked
 	 */
 	ShortURL mark(ShortURL urlSafe, boolean safeness);
 
 	/**
 	 * Update a ShortURL with the valor @su
-	 * @param su
+	 * @param ShortURL su
 	 */
 	void update(ShortURL su);
 
 	/**
 	 * Delete one ShortUrl with id like @param id
-	 * @param id
+	 * @param String id
 	 */
 	void delete(String id);
 
@@ -59,14 +59,14 @@ public interface ShortURLRepository {
 
 	/**
 	 * List the saved click's.
-	 * @param limit
-	 * @param offset
+	 * @param Long limit, limite de ShortUrl que se obtienen
+	 * @param Long offset
 	 * @return
 	 */
 	List<ShortURL> list(Long limit, Long offset);
 
 	/**
-	 * @return all the ShortUrl's saved on bd.
+	 * @return List<ShortURL> all the ShortUrl's saved on bd.
 	 */
 	List<ShortURL> listAll();
 

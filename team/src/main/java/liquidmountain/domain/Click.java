@@ -19,14 +19,14 @@ public class Click {
 
 	/**
 	 * Constructor
-	 * @param id
-	 * @param hash
-	 * @param created
-	 * @param referrer
-	 * @param browser
-	 * @param platform
-	 * @param ip
-	 * @param country
+	 * @param Long identificador del Click
+	 * @param String hash, identificador hash del click
+	 * @param Date created, fecha de creacion del click
+	 * @param String referrer
+	 * @param String browser, navegador donde se genero el click
+	 * @param String platform, plataforma donde se genero el click
+	 * @param String ip, direccion ipi donde se genero el click
+	 * @param String country, ciudad donde se genero el click
 	 */
 	public Click(Long id, String hash, Date created, String referrer,
 			String browser, String platform, String ip, String country) {

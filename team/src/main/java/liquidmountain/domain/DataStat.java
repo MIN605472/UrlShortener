@@ -10,8 +10,8 @@ public class DataStat {
 
     /**
      * Constructor
-     * @param data
-     * @param users
+     * @param String data
+     * @param Integer users, usuarios que han usado la url
      */
     public DataStat(String data, int users) {
         this.data = data;

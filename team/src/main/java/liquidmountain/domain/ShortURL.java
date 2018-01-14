@@ -28,18 +28,18 @@ public class ShortURL {
 
 	/**
 	 * Construsctor
-	 * @param hash
-	 * @param target
-	 * @param uri
-	 * @param sponsor
-	 * @param created
-	 * @param owner
-	 * @param mode
-	 * @param safe
-	 * @param ip
-	 * @param country
-	 * @param expirationDate
-	 * @param expirationTime
+	 * @param String hash, identificador hash de la url acortada
+	 * @param String target, url sin acortar
+	 * @param URI uri, url
+	 * @param String sponsor
+	 * @param Date created, fecha de la creacion de la url acortada
+	 * @param String owner.
+	 * @param Integer mode
+	 * @param Boolean safe, si es segura
+	 * @param String ip, direccion ip donde se genero la uri acortada
+	 * @param String country, pais donde se genero la uri acortada
+	 * @param Date expirationDate, fecha donde caduca la url acortada
+	 * @param Time expirationTime, hora del dia que caduca
 	 */
 	public ShortURL(String hash, String target, URI uri, String sponsor,
 			Date created, String owner, Integer mode, Boolean safe, String ip,

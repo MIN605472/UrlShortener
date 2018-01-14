@@ -19,8 +19,8 @@ public class ExtractInfo {
 
     /**
      * Extract @param request's geolocation.
-     * @param request
-     * @return
+     * @param HttpServletRequest request del usuario.
+     * @return String, devuelve la ciudad desde donde se realiza la peticion
      */
     public String extractCountry(HttpServletRequest request) {
         GeolocationAPI geoAPI = new GeolocationAPI();
@@ -30,8 +30,8 @@ public class ExtractInfo {
 
     /**
      * Extract @param request's browser.
-     * @param request
-     * @return
+     * @param HttpServletRequest request del usuario
+     * @return String, devuelve el navegador desde donde se realiza la peticion
      */
     public String extractBrowser(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
@@ -60,8 +60,8 @@ public class ExtractInfo {
     }
     /**
      * Extract @param request's operative system.
-     * @param request
-     * @return
+     * @param HttpServletRequest request del usuario
+     * @return String, devuelve la sistema operativo desde donde se realiza la peticion
      */
     public String extractOS(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
@@ -106,15 +106,15 @@ public class ExtractInfo {
 
     /**
      * Extract @param request's referer.
-     * @param request
-     * @return
+     * @param HttpServletRequest request del usuario
+     * @return String Referencia de la peticion del usuario
      */
     public String extractReferrer(HttpServletRequest request) { return request.getHeader("referer");}
 
     /**
      * Extract all paramenter's of @param request's.
-     * @param request
-     * @return
+     * @param HttpServletRequest request
+     * @return String[], donde esta toda la informacion de la peticion
      */
     public String[] extractAll(HttpServletRequest request) {
         String[] result = {extractBrowser(request), extractCountry(request), extractIP(request),

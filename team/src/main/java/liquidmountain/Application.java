@@ -18,8 +18,8 @@ public class Application extends SpringBootServletInitializer {
 
 	/**
 	 * Applicacition main
-	 * @param args
-	 * @throws Exception
+	 * @param args, argumentos de la aplicacion
+	 * @throws Exception (NO APLICA)
 	 */
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Application.class, args);

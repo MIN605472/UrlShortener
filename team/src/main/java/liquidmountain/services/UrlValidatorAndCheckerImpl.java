@@ -29,8 +29,8 @@ public class UrlValidatorAndCheckerImpl extends HystrixCommand<Boolean> implemen
 
     /**
      * Metodo que comprueba todas las caracteristicas de una URL
-     * @return
-     * @throws Exception
+     * @return Boolean = true (valida y bien formada), false ( no cumple una de las dos )
+     * @throws Exception (No aplica)
      */
     @Override
     protected Boolean run() throws Exception {
@@ -61,8 +61,8 @@ public class UrlValidatorAndCheckerImpl extends HystrixCommand<Boolean> implemen
 
     /**
      * Se comprueba que @param url es valida.
-     * @param url
-     * @return
+     * @param url que se comprueba
+     * @return true = es valida, false = no lo es
      */
     @Override
     public boolean isValid(String url){

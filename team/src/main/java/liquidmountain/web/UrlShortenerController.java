@@ -52,9 +52,9 @@ public class UrlShortenerController {
 
 	/**
 	 * Endpoint para acortar URL's.
-	 * @param id
-	 * @param request
-	 * @return
+	 * @param String id, identificador de la url
+	 * @param HttpServletRequest request, peticion del usuario
+	 * @return ResponseEntity GONE/NOT_FOUND
 	 */
     @ApiOperation(value ="Reddirect")
     @RequestMapping(value = "/{id:[a-zA-Z0-9]+(?!\\.html)}", method = RequestMethod.GET)
@@ -98,7 +98,7 @@ public class UrlShortenerController {
 
 	/**
 	 * Metodo para crear y guardar clikc's
-	 * @param hash
+	 * @param String hash, identificador hash de la URI
 	 * @param info:
 	 *            0: browser
 	 *            1: country
@@ -115,9 +115,8 @@ public class UrlShortenerController {
 	}
 
 	/**
-	 *
-	 * @param l
-	 * @return
+	 * @param ShortURL l, url acortada a la cual se redirigira
+	 * @return ResponseEntity OK
 	 */
 	private ResponseEntity<?> createSuccessfulRedirectToResponse(ShortURL l) {
 		HttpHeaders h = new HttpHeaders();
@@ -148,9 +147,9 @@ public class UrlShortenerController {
 
 	/**
 	 * Endpoint to verify that a link is well formed and is valid
-	 * @param url
-	 * @param request
-	 * @return
+	 * @param String url a verificar
+	 * @param HttpServletRequest user request
+	 * @return ResponseEntity: SAFE/UNSAFE url
 	 */
     @ApiOperation(value ="Verify that a link is well formed and is valid")
 	@RequestMapping(value = "/api/verify", method = RequestMethod.POST)
@@ -164,9 +163,9 @@ public class UrlShortenerController {
 
 	/**
 	 * Endpoint to check link is safe
-	 * @param url
-	 * @param request
-	 * @return
+	 * @param String url que se comprobara si es segura
+	 * @param HttpServletRequest user request
+	 * @return ResponseEntity: SAFE/UNSAFE url
 	 */
     @ApiOperation(value ="Check link is safe")
 	@RequestMapping(value = "/api/safe", method = RequestMethod.POST)
@@ -181,12 +180,12 @@ public class UrlShortenerController {
 
 	/**
 	 * Endpoint to short and save link
-	 * @param url
-	 * @param date
-	 * @param time
-	 * @param sponsor
-	 * @param request
-	 * @return
+	 * @param String url, url para acortar
+	 * @param String date, fecha que caducara
+	 * @param String time, hora del dia que caducara
+	 * @param String sponsor
+	 * @param HttpServletRequest user request
+	 * @return ResponseEntity CREATED/BAD_REQUEST
 	 */
     @ApiOperation(value ="Short and save one link")
 	@RequestMapping(value = "/api/urls", method = RequestMethod.POST)
@@ -230,13 +229,13 @@ public class UrlShortenerController {
 
 	/**
 	 *  Método privado que crear y guarda una url en caso de que este bien formada y sea valida
-	 * @param url
-	 * @param sponsor
-	 * @param owner
-	 * @param ip
-	 * @param expirationDate
-	 * @param expirationTime
-	 * @return
+	 * @param String url, URI que se guarda y comprueba
+	 * @param String sponsor
+	 * @param String owner
+	 * @param String ip, direccion ip desde donde se genera
+	 * @param String expirationDate, fecha que caduca
+	 * @param String expirationTime, hora que caduca
+	 * @return objeto ShortURL, con la uri acortada / null en el caso de que falle
 	 */
 	private ShortURL createAndSaveIfValid(String url, String sponsor,
 										  String owner, String ip, Date expirationDate, Time expirationTime) {

@@ -20,9 +20,9 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 
     /**
      * Endpoint que permite la redireccion a la pagina indicada por @param id
-     * @param id
-     * @param request
-     * @return
+     * @param id, identificador de la uri
+     * @param HttpServletRequest request del usuario
+     * @return ResponseEntity
      */
     @Override
     public ResponseEntity<?> redirectTo(@PathVariable String id, HttpServletRequest request) {
@@ -33,12 +33,12 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
     /**
      * Endopoint que permite acortar la direccion de @param url, s
      * se puede incluir la fecha y el momento que cadeque.
-     * @param url
-     * @param date
-     * @param time
-     * @param sponsor
-     * @param request
-     * @return
+     * @param String url, que se quiere acortar
+     * @param String date, fecha que caduca
+     * @param String time, hora que caduca
+     * @param String sponsor
+     * @param HttpServletRequest request del usuario
+     * @return ResponseEntity
      */
     @Override
     public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
@@ -53,9 +53,9 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
     /**
      * Endpoint que verifica si la url aportada @param url esta bien formada
      * y es válida.
-     * @param url
-     * @param request
-     * @return
+     * @param tring url que se quiere comprobar
+     * @param HttpServletRequest request del usuario
+     * @return ResponseEntity
      */
     @Override
     public ResponseEntity<String> verify(@RequestParam("url") String url, HttpServletRequest request) {
@@ -65,9 +65,9 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 
     /**
      * Endpoint que valida si la url @param url es segura.
-     * @param url
-     * @param request
-     * @return
+     * @param String url que se quiere comprobar
+     * @param HttpServletRequest request del usuario
+     * @return ResponseEntity
      */
     @Override
     public ResponseEntity<String> checkSafe(@RequestParam("url") String url, HttpServletRequest request) {

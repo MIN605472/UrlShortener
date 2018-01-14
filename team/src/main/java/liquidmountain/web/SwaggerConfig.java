@@ -32,7 +32,7 @@ public class SwaggerConfig {
 
     /**
      * Define LiquidMountain information
-     * @return ApiInfo Object
+     * @return ApiInfo Object, con la informacion que se mostrara en la pagina de swagger
      */
     private ApiInfo metaData() {
       return new ApiInfo(
