@@ -124,6 +124,16 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
 	}
 
 	@Override
+	public List<ShortURL> listAll() {
+		try {
+			return jdbc.query("SELECT * FROM shorturl", rowMapper);
+		} catch (Exception e) {
+			log.debug("When select all", e);
+			return null;
+		}
+	}
+
+	@Override
 	public List<ShortURL> findByTarget(String target) {
 		try {
 			return jdbc.query("SELECT * FROM shorturl WHERE target = ?",

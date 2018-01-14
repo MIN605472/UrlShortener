@@ -108,12 +108,20 @@ public class ShortURL {
 		return mode;
 	}
 
+	public void setMode(Integer mode) {
+		this.mode = mode;
+	}
+
 	public String getSponsor() {
 		return sponsor;
 	}
 
 	public Boolean getSafe() {
 		return safe;
+	}
+
+	public void setSafe(boolean safe) {
+		this.safe = safe;
 	}
 
 	public String getIP() {

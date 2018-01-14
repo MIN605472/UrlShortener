@@ -58,22 +58,27 @@ public class StatsController {
                 int browserWhere = 0;
                 int platformWhere = 0;
                 for (int j = 0; j < urlStats.countries.size(); j++) {
-                    if ((click.getCountry() == null && urlStats.countries.get(j).getData() == null)
-                            || !click.getCountry().equals(urlStats.countries.get(j).getData())) {
+                    if ((click.getCountry() == null && urlStats.countries.get(j).getData().equals("Unknown"))) {
                         countryExists = true;
                         countryWhere = j;
                     }
+                    if (click.getCountry() != null) {
+                        if(click.getCountry().equals(urlStats.countries.get(j).getData())) {
+                            countryExists = true;
+                            countryWhere = j;
+                        }
+                    }
                 }
                 for (int j = 0; j < urlStats.browsers.size(); j++) {
-                    if ((click.getCountry() == null && urlStats.countries.get(j).getData() == null)
-                            || !click.getBrowser().equals(urlStats.browsers.get(j).getData())) {
+                    if ((click.getBrowser() == null && urlStats.browsers.get(j).getData() == null)
+                            || click.getBrowser().equals(urlStats.browsers.get(j).getData())) {
                         browserExists = true;
                         browserWhere = j;
                     }
                 }
                 for (int j = 0; j < urlStats.platforms.size(); j++) {
-                    if ((click.getCountry() == null && urlStats.countries.get(j).getData() == null)
-                            || !click.getPlatform().equals(urlStats.platforms.get(j).getData())) {
+                    if ((click.getPlatform() == null && urlStats.platforms.get(j).getData() == null)
+                            || click.getPlatform().equals(urlStats.platforms.get(j).getData())) {
                         platformExists = true;
                         platformWhere = j;
                     }
