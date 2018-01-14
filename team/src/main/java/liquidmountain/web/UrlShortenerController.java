@@ -52,8 +52,8 @@ public class UrlShortenerController {
 
 	/**
 	 * Endpoint para acortar URL's.
-	 * @param String id, identificador de la url
-	 * @param HttpServletRequest request, peticion del usuario
+	 * @param id: String identificador de la url
+	 * @param request: HttpServletRequest peticion del usuario
 	 * @return ResponseEntity GONE/NOT_FOUND
 	 */
     @ApiOperation(value ="Redirect")
@@ -98,7 +98,7 @@ public class UrlShortenerController {
 
 	/**
 	 * Metodo para crear y guardar clikc's
-	 * @param String hash, identificador hash de la URI
+	 * @param hash: String identificador hash de la URI
 	 * @param info:
 	 *            0: browser
 	 *            1: country
@@ -115,7 +115,7 @@ public class UrlShortenerController {
 	}
 
 	/**
-	 * @param ShortURL l, url acortada a la cual se redirigira
+	 * @param l: ShortURL url acortada a la cual se redirigira
 	 * @return ResponseEntity OK
 	 */
 	private ResponseEntity<?> createSuccessfulRedirectToResponse(ShortURL l) {
@@ -126,8 +126,8 @@ public class UrlShortenerController {
 
 	/**
 	 * Endpoint to verify that a link is well formed and is valid
-	 * @param String url a verificar
-	 * @param HttpServletRequest user request
+	 * @param url: String a verificar
+	 * @param request: HttpServletRequest user request
 	 * @return ResponseEntity: SAFE/UNSAFE url
 	 */
     @ApiOperation(value ="Verify that a link is well formed and is valid")
@@ -142,8 +142,8 @@ public class UrlShortenerController {
 
 	/**
 	 * Endpoint to check link is safe
-	 * @param String url que se comprobara si es segura
-	 * @param HttpServletRequest user request
+	 * @param url: String que se comprobara si es segura
+	 * @param request: HttpServletRequest
 	 * @return ResponseEntity: SAFE/UNSAFE url
 	 */
     @ApiOperation(value ="Check link is safe")
@@ -159,11 +159,11 @@ public class UrlShortenerController {
 
 	/**
 	 * Endpoint to short and save link
-	 * @param String url, url para acortar
-	 * @param String date, fecha que caducara
-	 * @param String time, hora del dia que caducara
-	 * @param String sponsor
-	 * @param HttpServletRequest user request
+	 * @param url: String url para acortar
+	 * @param date: String fecha que caducara
+	 * @param time: String hora del dia que caducara
+	 * @param sponsor: String
+	 * @param request: HttpServletRequest
 	 * @return ResponseEntity CREATED/BAD_REQUEST
 	 */
     @ApiOperation(value ="Short and save one link")
@@ -208,12 +208,12 @@ public class UrlShortenerController {
 
 	/**
 	 *  Método privado que crear y guarda una url en caso de que este bien formada y sea valida
-	 * @param String url, URI que se guarda y comprueba
-	 * @param String sponsor
-	 * @param String owner
-	 * @param String ip, direccion ip desde donde se genera
-	 * @param String expirationDate, fecha que caduca
-	 * @param String expirationTime, hora que caduca
+	 * @param url: String URI que se guarda y comprueba
+	 * @param sponsor: String
+	 * @param owner: String
+	 * @param ip: String direccion ip desde donde se genera
+	 * @param expirationDate: String fecha que caduca
+	 * @param expirationTime: String hora que caduca
 	 * @return objeto ShortURL, con la uri acortada / null en el caso de que falle
 	 */
 	private ShortURL createAndSaveIfValid(String url, String sponsor,

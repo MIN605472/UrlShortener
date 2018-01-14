@@ -43,6 +43,9 @@ public class ScheduledTasks {
         urlList = shortURLRepository.listAll();
     }
 
+    /**
+     * Periodically check if links still safe
+     */
     @Scheduled(fixedRate = 30 * 60 * 1000)
     public void CheckSafe() {
         log.info("Checking if links still safe");
@@ -63,6 +66,9 @@ public class ScheduledTasks {
         }
     }
 
+    /**
+     * Periodically check if links still verified
+     */
     @Scheduled(fixedRate = checkRate)
     public void CheckValidated() {
         log.info("Checking if links still valid and alive");
@@ -81,6 +87,9 @@ public class ScheduledTasks {
         }
     }
 
+    /**
+     * Periodically check if links have expired
+     */
     @Scheduled(fixedRate = checkRate)
     public void CheckExpired() {
         log.info("Checking if links expired");
