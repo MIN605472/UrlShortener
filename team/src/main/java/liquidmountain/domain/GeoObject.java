@@ -1,5 +1,9 @@
 package liquidmountain.domain;
 
+
+/**
+ * Class to give persistence Url's geoObjet
+ */
 public class GeoObject {
     public String status;
     public String country;
@@ -16,6 +20,23 @@ public class GeoObject {
     public String as;
     public String query;
 
+    /**
+     * Constructor
+     * @param status
+     * @param country
+     * @param countryCode
+     * @param region
+     * @param regionName
+     * @param city
+     * @param zip
+     * @param lat
+     * @param lon
+     * @param timezone
+     * @param isp
+     * @param org
+     * @param as
+     * @param query
+     */
     public GeoObject(String status, String country, String countryCode, String region, String regionName, String city, String zip, float lat, float lon, String timezone, String isp, String org, String as, String query) {
         this.status = status;
         this.country = country;

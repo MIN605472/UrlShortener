@@ -7,6 +7,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+
+/**
+ * Class to give persistence short url
+ */
 public class ShortURL {
 
 	private String hash;
@@ -22,6 +26,21 @@ public class ShortURL {
 	private Date expirationDate;
 	private Time expirationTime;
 
+	/**
+	 * Construsctor
+	 * @param hash
+	 * @param target
+	 * @param uri
+	 * @param sponsor
+	 * @param created
+	 * @param owner
+	 * @param mode
+	 * @param safe
+	 * @param ip
+	 * @param country
+	 * @param expirationDate
+	 * @param expirationTime
+	 */
 	public ShortURL(String hash, String target, URI uri, String sponsor,
 			Date created, String owner, Integer mode, Boolean safe, String ip,
 			String country, Date expirationDate, Time expirationTime) {

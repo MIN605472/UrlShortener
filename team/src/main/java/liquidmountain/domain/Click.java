@@ -2,6 +2,10 @@ package liquidmountain.domain;
 
 import java.sql.Date;
 
+
+/**
+ * Class to give persistence url's clicks
+ */
 public class Click {
 
 	private Long id;
@@ -13,6 +17,17 @@ public class Click {
 	private String ip;
 	private String country;
 
+	/**
+	 * Constructor
+	 * @param id
+	 * @param hash
+	 * @param created
+	 * @param referrer
+	 * @param browser
+	 * @param platform
+	 * @param ip
+	 * @param country
+	 */
 	public Click(Long id, String hash, Date created, String referrer,
 			String browser, String platform, String ip, String country) {
 		this.id = id;
