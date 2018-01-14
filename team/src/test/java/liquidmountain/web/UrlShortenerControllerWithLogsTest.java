@@ -56,6 +56,17 @@ public class UrlShortenerControllerWithLogsTest {
     }
 
     @Test
+    public void redirectToExpired() throws Exception {
+        //Key exists, so redirect
+        when(shortURLRepository.findByKey("someKey")).thenReturn(ShortURLFixture.someExpiredUrl());
+        when(clickRepository.save(any())).thenAnswer((InvocationOnMock invocation) -> invocation.getArguments()[0]);
+
+        mockMvc.perform(get("/{id}", "someKey")).andDo(print())
+                .andExpect(status().isTemporaryRedirect())
+                .andExpect(redirectedUrl("http://localhost/exp.html"));
+    }
+
+    @Test
     public void redirectToFails() throws Exception {
         //Key doesn't exists, so no redirect
         when(shortURLRepository.findByKey("someKey")).thenReturn(null);

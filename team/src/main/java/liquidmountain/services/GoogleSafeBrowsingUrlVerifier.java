@@ -1,10 +1,7 @@
 package liquidmountain.services;
 
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import javax.ws.rs.client.Client;
@@ -28,7 +25,7 @@ public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
         try {
             Client client = ClientBuilder.newClient();
 
-            Response response = client.target("https://safebrowsing.googleapis.com/v4/threatMatches:find?key=")
+            Response response = client.target("https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + API_KEY)
                     .request(MediaType.APPLICATION_JSON)
                     .post(Entity.entity("{\n" +
                             "    \"client\": {\n" +

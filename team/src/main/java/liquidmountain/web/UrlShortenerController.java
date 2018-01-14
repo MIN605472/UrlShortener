@@ -112,24 +112,6 @@ public class UrlShortenerController {
 		return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
 	}
 
-    @ApiOperation(value ="Check links still safe")
-    @RequestMapping(value = "/api/test", method = RequestMethod.GET)
-	public void test() {
-		LOG.info("Checking if links still safe");
-		GoogleSafeBrowsingUrlVerifier googleSafeBrowsingUrlVerifier = new GoogleSafeBrowsingUrlVerifier();
-		List<ShortURL> urlList = shortURLRepository.listAll();
-		for(ShortURL s : urlList) {
-			if(!googleSafeBrowsingUrlVerifier.isSafe(s.getTarget())){
-				LOG.info("URL {} not safe anymore.", s.getTarget());
-				s.setSafe(false);
-				s.setMode(HttpStatus.GONE.value());
-			} else{
-				s.setSafe(true);
-				s.setMode(HttpStatus.TEMPORARY_REDIRECT.value());
-			}
-		}
-	}
-
     @ApiOperation(value ="Verify that a link is well formed and is valid")
 	@RequestMapping(value = "/api/verify", method = RequestMethod.POST)
 	public ResponseEntity<String> verify(@RequestParam("url") String url, HttpServletRequest request) {
