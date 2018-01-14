@@ -12,6 +12,9 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+/**
+ * Implementación de un validador de ULR's
+ */
 public class UrlValidatorAndCheckerImpl extends HystrixCommand<Boolean> implements UrlValidatorAndChecker {
     public final String url;
     public boolean valid = true;
@@ -24,6 +27,11 @@ public class UrlValidatorAndCheckerImpl extends HystrixCommand<Boolean> implemen
         this.url = url;
     }
 
+    /**
+     * Metodo que comprueba todas las caracteristicas de una URL
+     * @return Boolean = true (valida y bien formada), false ( no cumple una de las dos )
+     * @throws Exception (No aplica)
+     */
     @Override
     protected Boolean run() throws Exception {
         String msg = "";
@@ -51,6 +59,11 @@ public class UrlValidatorAndCheckerImpl extends HystrixCommand<Boolean> implemen
         return false;
     }
 
+    /**
+     * Se comprueba que @param url es valida.
+     * @param url que se comprueba
+     * @return true = es valida, false = no lo es
+     */
     @Override
     public boolean isValid(String url){
         UrlValidator urlValidator = new UrlValidator(new String[] { "http",
@@ -58,6 +71,11 @@ public class UrlValidatorAndCheckerImpl extends HystrixCommand<Boolean> implemen
         return urlValidator.isValid(url);
     }
 
+    /**
+     * Se comprueba que @param url esta viva.
+     * @param url
+     * @return
+     */
     @Override
     public boolean isAlive(String url){
         int code = getCode(url);
@@ -65,6 +83,11 @@ public class UrlValidatorAndCheckerImpl extends HystrixCommand<Boolean> implemen
         return code == 200;
     }
 
+    /**
+     * Se realizan multiples conexiones a @param url para comprobar su estado, 301 o 429 pueden ser los estados.
+     * @param url
+     * @return
+     */
     private int getCode(String url) {
         int code = -1;
         if(!alive){

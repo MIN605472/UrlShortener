@@ -3,7 +3,6 @@ package liquidmountain.services;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClientException;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -17,6 +16,11 @@ public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
     private String API_KEY = "";
 
 
+    /**
+     * Check using google's api if @param is save
+     * @param String url, url a comprobar si es segura
+     * @return boolean, true=segura, false=unsafe
+     */
     @Override
     public boolean isSafe(String url) {
 

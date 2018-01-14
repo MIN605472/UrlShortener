@@ -14,6 +14,9 @@ import liquidmountain.domain.ShortURL;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Implementation of class ClickRepository
+ */
 @Repository
 public class ShortURLRepositoryImpl implements ShortURLRepository {
 
