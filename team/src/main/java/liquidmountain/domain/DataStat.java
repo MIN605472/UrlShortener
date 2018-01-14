@@ -1,9 +1,18 @@
 package liquidmountain.domain;
 
+
+/**
+ * Class to give persistence url's data
+ */
 public class DataStat {
     private String data;
     private int users;
 
+    /**
+     * Constructor
+     * @param String data
+     * @param Integer users, usuarios que han usado la url
+     */
     public DataStat(String data, int users) {
         this.data = data;
         this.users = users;

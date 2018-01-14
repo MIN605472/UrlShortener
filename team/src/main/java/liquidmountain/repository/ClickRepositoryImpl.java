@@ -18,6 +18,9 @@ import java.sql.Types;
 import java.util.List;
 
 
+/**
+ * Implementation of class ClickRepository
+ */
 @Repository
 public class ClickRepositoryImpl implements ClickRepository {
 

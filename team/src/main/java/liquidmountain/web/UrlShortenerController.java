@@ -35,6 +35,9 @@ import java.util.UUID;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * Clase con los endpoints de la aplicación
+ */
 public class UrlShortenerController {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(UrlShortenerController.class);
@@ -47,6 +50,12 @@ public class UrlShortenerController {
 	@Autowired
 	protected ExtractInfo extractInfo;
 
+	/**
+	 * Endpoint para acortar URL's.
+	 * @param String id, identificador de la url
+	 * @param HttpServletRequest request, peticion del usuario
+	 * @return ResponseEntity GONE/NOT_FOUND
+	 */
     @ApiOperation(value ="Reddirect")
     @RequestMapping(value = "/{id:[a-zA-Z0-9]+(?!\\.html)}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id,
@@ -88,8 +97,8 @@ public class UrlShortenerController {
 	}
 
 	/**
-	 *
-	 * @param hash
+	 * Metodo para crear y guardar clikc's
+	 * @param String hash, identificador hash de la URI
 	 * @param info:
 	 *            0: browser
 	 *            1: country
@@ -105,13 +114,19 @@ public class UrlShortenerController {
 		LOG.info(cl!=null?"["+hash+"] saved with id ["+cl.getId()+"]":"["+hash+"] was not saved");
 	}
 
-
+	/**
+	 * @param ShortURL l, url acortada a la cual se redirigira
+	 * @return ResponseEntity OK
+	 */
 	private ResponseEntity<?> createSuccessfulRedirectToResponse(ShortURL l) {
 		HttpHeaders h = new HttpHeaders();
 		h.setLocation(URI.create(l.getTarget()));
 		return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
 	}
 
+	/**
+	 * Endpoint que comprueba si una URL es segura usando la API de Google
+	 */
     @ApiOperation(value ="Check links still safe")
     @RequestMapping(value = "/api/test", method = RequestMethod.GET)
 	public void test() {
@@ -130,6 +145,12 @@ public class UrlShortenerController {
 		}
 	}
 
+	/**
+	 * Endpoint to verify that a link is well formed and is valid
+	 * @param String url a verificar
+	 * @param HttpServletRequest user request
+	 * @return ResponseEntity: SAFE/UNSAFE url
+	 */
     @ApiOperation(value ="Verify that a link is well formed and is valid")
 	@RequestMapping(value = "/api/verify", method = RequestMethod.POST)
 	public ResponseEntity<String> verify(@RequestParam("url") String url, HttpServletRequest request) {
@@ -140,6 +161,12 @@ public class UrlShortenerController {
 		} else return new ResponseEntity<>("UNSAFE", h, HttpStatus.OK);
 	}
 
+	/**
+	 * Endpoint to check link is safe
+	 * @param String url que se comprobara si es segura
+	 * @param HttpServletRequest user request
+	 * @return ResponseEntity: SAFE/UNSAFE url
+	 */
     @ApiOperation(value ="Check link is safe")
 	@RequestMapping(value = "/api/safe", method = RequestMethod.POST)
 	public ResponseEntity<String> checkSafe(@RequestParam("url") String url, HttpServletRequest request) {
@@ -151,6 +178,15 @@ public class UrlShortenerController {
 		} else return new ResponseEntity<>("UNSAFE", h, HttpStatus.OK);
 	}
 
+	/**
+	 * Endpoint to short and save link
+	 * @param String url, url para acortar
+	 * @param String date, fecha que caducara
+	 * @param String time, hora del dia que caducara
+	 * @param String sponsor
+	 * @param HttpServletRequest user request
+	 * @return ResponseEntity CREATED/BAD_REQUEST
+	 */
     @ApiOperation(value ="Short and save one link")
 	@RequestMapping(value = "/api/urls", method = RequestMethod.POST)
 	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
@@ -191,6 +227,16 @@ public class UrlShortenerController {
 		}
 	}
 
+	/**
+	 *  Método privado que crear y guarda una url en caso de que este bien formada y sea valida
+	 * @param String url, URI que se guarda y comprueba
+	 * @param String sponsor
+	 * @param String owner
+	 * @param String ip, direccion ip desde donde se genera
+	 * @param String expirationDate, fecha que caduca
+	 * @param String expirationTime, hora que caduca
+	 * @return objeto ShortURL, con la uri acortada / null en el caso de que falle
+	 */
 	private ShortURL createAndSaveIfValid(String url, String sponsor,
 										  String owner, String ip, Date expirationDate, Time expirationTime) {
 		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();

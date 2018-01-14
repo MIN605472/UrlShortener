@@ -9,11 +9,17 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-
+/**
+ * Configuration of Swagger
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
 
+    /**
+     *
+     * @return Docket with Swagger info
+     */
     @Bean
     public Docket productApi() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -24,6 +30,10 @@ public class SwaggerConfig {
                 .apiInfo(metaData());
     }
 
+    /**
+     * Define LiquidMountain information
+     * @return ApiInfo Object, con la informacion que se mostrara en la pagina de swagger
+     */
     private ApiInfo metaData() {
       return new ApiInfo(
                 "Liquid Mountain's URL Shortener REST API",

@@ -19,6 +19,10 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+
+/**
+ * Class to define and execute a Schedule tasks that check URL's properties
+ */
 @Component
 public class ScheduledTasks {
 
@@ -33,6 +37,7 @@ public class ScheduledTasks {
 
     private final int checkRate = 30 * 60 * 1000;  // media hora
 
+    //Get all urls to check
     @Scheduled(fixedRate = checkRate - 1000) // Un minuto menos
     public void getUrls() {
         urlList = shortURLRepository.listAll();
