@@ -1,5 +1,7 @@
 package liquidmountain.web;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import liquidmountain.domain.Click;
 import liquidmountain.domain.DataStat;
 import liquidmountain.domain.URLStats;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@Api(value="URLs_stats",description="Operations pertaining to stats of URLs")
 public class StatsController {
     private static final Logger LOG = LoggerFactory
             .getLogger(UrlShortenerController.class);
@@ -31,6 +34,7 @@ public class StatsController {
     @Autowired
     protected ClickRepository clickRepository;
 
+    @ApiOperation(value ="View a list of URL short's stats")
     @RequestMapping(value = "/api/stats/{id:.+}", method = RequestMethod.GET)
     public ResponseEntity<URLStats> showStats(@PathVariable String id,
                                               HttpServletRequest request) {
