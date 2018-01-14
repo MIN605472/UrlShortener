@@ -35,5 +35,9 @@ dependencies {
 
     testRuntime 'org.hsqldb:hsqldb'
 
+    // Swagger Dependencies
+    compile("io.springfox:springfox-swagger2:2.0.2")
+    compile("io.springfox:springfox-swagger-ui:2.0.2")
+
     compile 'org.springframework.cloud:spring-cloud-starter-hystrix:1.4.0.RELEASE'
 }
