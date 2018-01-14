@@ -47,7 +47,7 @@ public class UrlShortenerController {
 
 	@RequestMapping(value = "/{id:[a-zA-Z0-9]+(?!\\.html)}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id,
-			HttpServletRequest request) {
+										HttpServletRequest request) {
 		ShortURL l = shortURLRepository.findByKey(id);
 		if(l != null){
 			// Construct date and time objects
