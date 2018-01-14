@@ -112,6 +112,18 @@ public class UrlShortenerTests {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void ApiVerifyTest() throws Exception{
+        mockMvc.perform(post("/api/verify").param("url", "someKey")).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string("UNSAFE"));
+    }
+
+    @Test
+    public void ApiSafeTest() throws Exception{
+        mockMvc.perform(post("/api/safe").param("url", "someKey")).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string("SAFE"));
+    }
+
     private void configureTransparentSave() {
         when(shortURLRepository.save(any(ShortURL.class)))
                 .then((Answer<ShortURL>) invocation -> (ShortURL) invocation.getArguments()[0]);

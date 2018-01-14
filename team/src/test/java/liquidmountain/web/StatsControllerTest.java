@@ -69,4 +69,40 @@ public class StatsControllerTest {
         mockMvc.perform(get("/api/stats/{id}", "someKey")).andDo(print()).andExpect(status().isAccepted());
     }
 
+    @Test
+    public void showStatsWithCountry() throws Exception{
+        List<Click> clicks = new ArrayList<>();
+        clicks.add(ClickFixture.clickCountry(ShortURLFixture.someUrl()));
+        when(shortURLRepository.findByKey("someKey")).thenReturn(ShortURLFixture.someUrl());
+        when(clickRepository.findByHash("someKey")).thenReturn(clicks);
+
+        mockMvc.perform(get("/api/stats/{id}", "someKey")).andDo(print())
+                .andExpect(status().isAccepted())
+                .andExpect(content().json("{'countries':[{'data':'Spain','users':1}],'browsers':[{'data':null,'users':1}],'platforms':[{'data':null,'users':1}]}"));
+    }
+
+    @Test
+    public void showStatsWithBrowser() throws Exception{
+        List<Click> clicks = new ArrayList<>();
+        clicks.add(ClickFixture.clickBrowser(ShortURLFixture.someUrl()));
+        when(shortURLRepository.findByKey("someKey")).thenReturn(ShortURLFixture.someUrl());
+        when(clickRepository.findByHash("someKey")).thenReturn(clicks);
+
+        mockMvc.perform(get("/api/stats/{id}", "someKey")).andDo(print())
+                .andExpect(status().isAccepted())
+                .andExpect(content().json("{'countries':[{'data':'Unknown','users':1}],'browsers':[{'data':'Mozilla Firefox','users':1}],'platforms':[{'data':null,'users':1}]}"));
+    }
+
+    @Test
+    public void showStatsWithPlatform() throws Exception{
+        List<Click> clicks = new ArrayList<>();
+        clicks.add(ClickFixture.clickPlatform(ShortURLFixture.someUrl()));
+        when(shortURLRepository.findByKey("someKey")).thenReturn(ShortURLFixture.someUrl());
+        when(clickRepository.findByHash("someKey")).thenReturn(clicks);
+
+        mockMvc.perform(get("/api/stats/{id}", "someKey")).andDo(print())
+                .andExpect(status().isAccepted())
+                .andExpect(content().json("{'countries':[{'data':'Unknown','users':1}],'browsers':[{'data':null,'users':1}],'platforms':[{'data':'Windows 7','users':1}]}"));
+    }
+
 }

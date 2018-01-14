@@ -2,6 +2,7 @@ package liquidmountain.repository;
 
 import liquidmountain.repository.fixture.ClickFixture;
 import liquidmountain.repository.fixture.ShortURLFixture;
+import org.apache.catalina.LifecycleState;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +11,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
 import liquidmountain.domain.Click;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -78,6 +81,15 @@ public class ClickRepositoryTests {
 		repository.delete(id1);
 		assertEquals(repository.count().intValue(), 1);
 		repository.delete(id2);
+		assertEquals(repository.count().intValue(), 0);
+	}
+
+	@Test
+	public void deleteAll() throws Exception {
+		repository.save(ClickFixture.click(ShortURLFixture.url1()));
+		repository.save(ClickFixture.click(ShortURLFixture.url2()));
+		assertEquals(repository.count().intValue(), 2);
+		repository.deleteAll();
 		assertEquals(repository.count().intValue(), 0);
 	}
 
