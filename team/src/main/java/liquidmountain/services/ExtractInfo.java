@@ -4,6 +4,10 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
+
+/**
+ * Class to obtain Click's information.
+ */
 @Service
 public class ExtractInfo {
 
@@ -13,12 +17,22 @@ public class ExtractInfo {
         return request.getRemoteAddr();
     }
 
+    /**
+     * Extract @param request's geolocation.
+     * @param request
+     * @return
+     */
     public String extractCountry(HttpServletRequest request) {
         GeolocationAPI geoAPI = new GeolocationAPI();
 
         return geoAPI.getCity(extractIP(request));
     }
 
+    /**
+     * Extract @param request's browser.
+     * @param request
+     * @return
+     */
     public String extractBrowser(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
         String browser = "undefined";
@@ -44,7 +58,11 @@ public class ExtractInfo {
         }
         return browser;
     }
-
+    /**
+     * Extract @param request's operative system.
+     * @param request
+     * @return
+     */
     public String extractOS(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
         String os = "undefined";
@@ -86,8 +104,18 @@ public class ExtractInfo {
         return os;
     }
 
+    /**
+     * Extract @param request's referer.
+     * @param request
+     * @return
+     */
     public String extractReferrer(HttpServletRequest request) { return request.getHeader("referer");}
 
+    /**
+     * Extract all paramenter's of @param request's.
+     * @param request
+     * @return
+     */
     public String[] extractAll(HttpServletRequest request) {
         String[] result = {extractBrowser(request), extractCountry(request), extractIP(request),
         extractOS(request), extractReferrer(request)};

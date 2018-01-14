@@ -10,7 +10,11 @@ import javax.ws.rs.core.Response;
 
 @Service
 public class GeolocationAPI {
-
+    /**
+     * Obtain the city of @param ip
+     * @param ip
+     * @return
+     */
     public String getCity(String ip) {
         Client client = ClientBuilder.newClient();
         System.out.println("envio " + "http://ip-api.com/json/" + ip);

@@ -35,6 +35,9 @@ import java.util.UUID;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * Clase con los endpoints de la aplicación
+ */
 public class UrlShortenerController {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(UrlShortenerController.class);
@@ -47,6 +50,12 @@ public class UrlShortenerController {
 	@Autowired
 	protected ExtractInfo extractInfo;
 
+	/**
+	 * Endpoint para acortar URL's.
+	 * @param id
+	 * @param request
+	 * @return
+	 */
     @ApiOperation(value ="Reddirect")
     @RequestMapping(value = "/{id:[a-zA-Z0-9]+(?!\\.html)}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String id,
@@ -88,7 +97,7 @@ public class UrlShortenerController {
 	}
 
 	/**
-	 *
+	 * Metodo para crear y guardar clikc's
 	 * @param hash
 	 * @param info:
 	 *            0: browser
@@ -105,13 +114,20 @@ public class UrlShortenerController {
 		LOG.info(cl!=null?"["+hash+"] saved with id ["+cl.getId()+"]":"["+hash+"] was not saved");
 	}
 
-
+	/**
+	 *
+	 * @param l
+	 * @return
+	 */
 	private ResponseEntity<?> createSuccessfulRedirectToResponse(ShortURL l) {
 		HttpHeaders h = new HttpHeaders();
 		h.setLocation(URI.create(l.getTarget()));
 		return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
 	}
 
+	/**
+	 * Endpoint que comprueba si una URL es segura usando la API de Google
+	 */
     @ApiOperation(value ="Check links still safe")
     @RequestMapping(value = "/api/test", method = RequestMethod.GET)
 	public void test() {
@@ -130,6 +146,12 @@ public class UrlShortenerController {
 		}
 	}
 
+	/**
+	 * Endpoint to verify that a link is well formed and is valid
+	 * @param url
+	 * @param request
+	 * @return
+	 */
     @ApiOperation(value ="Verify that a link is well formed and is valid")
 	@RequestMapping(value = "/api/verify", method = RequestMethod.POST)
 	public ResponseEntity<String> verify(@RequestParam("url") String url, HttpServletRequest request) {
@@ -140,6 +162,12 @@ public class UrlShortenerController {
 		} else return new ResponseEntity<>("UNSAFE", h, HttpStatus.OK);
 	}
 
+	/**
+	 * Endpoint to check link is safe
+	 * @param url
+	 * @param request
+	 * @return
+	 */
     @ApiOperation(value ="Check link is safe")
 	@RequestMapping(value = "/api/safe", method = RequestMethod.POST)
 	public ResponseEntity<String> checkSafe(@RequestParam("url") String url, HttpServletRequest request) {
@@ -151,6 +179,15 @@ public class UrlShortenerController {
 		} else return new ResponseEntity<>("UNSAFE", h, HttpStatus.OK);
 	}
 
+	/**
+	 * Endpoint to short and save link
+	 * @param url
+	 * @param date
+	 * @param time
+	 * @param sponsor
+	 * @param request
+	 * @return
+	 */
     @ApiOperation(value ="Short and save one link")
 	@RequestMapping(value = "/api/urls", method = RequestMethod.POST)
 	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
@@ -191,6 +228,16 @@ public class UrlShortenerController {
 		}
 	}
 
+	/**
+	 *  Método privado que crear y guarda una url en caso de que este bien formada y sea valida
+	 * @param url
+	 * @param sponsor
+	 * @param owner
+	 * @param ip
+	 * @param expirationDate
+	 * @param expirationTime
+	 * @return
+	 */
 	private ShortURL createAndSaveIfValid(String url, String sponsor,
 										  String owner, String ip, Date expirationDate, Time expirationTime) {
 		GoogleSafeBrowsingUrlVerifier googleSafe = new GoogleSafeBrowsingUrlVerifier();
