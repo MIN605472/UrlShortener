@@ -69,6 +69,7 @@ function qrGeneratorHandler(qrNumber) {
   };
 }
 
+
 function logoChangeHandler(qrNumber) {
   return (ev) => {
     const formData = new FormData();
@@ -87,6 +88,9 @@ function logoChangeHandler(qrNumber) {
   };
 }
 
+/**
+ * Stop spinners from spinning. Because fuck 2017.
+ */
 function setSpinners() {
     let safeIconn = document.getElementById('safeIcon');
     let verifyIconn = document.getElementById('verifiedIcon');
@@ -107,6 +111,12 @@ let isSafe = false;
 let isVerified = false;
 
 $(document).ready(() => {
+    /**
+     * Handling the shortener action.
+     * Handles ordered petitions to safe, verified and finally shortener.
+     * If something fails, returns an error immediately.
+     * If everything goes fine, returns the shortened url.
+     */
   $('#shortener').submit((event) => {
     modal.style.display = "block";
     event.preventDefault();
@@ -207,6 +217,10 @@ $(document).ready(() => {
         window.location = "index.html"
     });
 
+    /**
+     * Sets the data for the Country chart
+     * @param data: Array containing the necessary data formatted correctly for ChartJS
+     */
     function setCountryData(data) {
         let countryChartJS = document.getElementById("countryChartJS");
         let countryChart = new Chart(countryChartJS, {
@@ -230,6 +244,11 @@ $(document).ready(() => {
             }
         });
     }
+
+    /**
+     * Sets the data for the Browser chart
+     * @param data: Array containing the necessary data formatted correctly for ChartJS
+     */
     function setBrowserData(data) {
         let browserChartJS = document.getElementById("browserChartJS");
         let browserChart = new Chart(browserChartJS, {
@@ -253,6 +272,11 @@ $(document).ready(() => {
             }
         });
     }
+
+    /**
+     * Sets the data for the Platform chart
+     * @param data: Array containing the necessary data formatted correctly for ChartJS
+     */
     function setPlatformData(data) {
         let platformChartJS = document.getElementById("platformChartJS");
         let platformChart = new Chart(platformChartJS, {
@@ -277,6 +301,12 @@ $(document).ready(() => {
         });
     }
 
+    /**
+     * Handles the show stats event.
+     * Handles the petition and displays the stat charts.
+     * If something goes wrong, displays error.
+     * If everything goes fine, displays the stat charts.
+     */
   $('#stats').submit((event) => {
       event.preventDefault();
       $.ajax({

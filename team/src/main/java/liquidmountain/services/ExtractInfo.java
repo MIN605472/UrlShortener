@@ -19,7 +19,7 @@ public class ExtractInfo {
 
     /**
      * Extract @param request's geolocation.
-     * @param HttpServletRequest request del usuario.
+     * @param request: HttpServletRequest request del usuario.
      * @return String, devuelve la ciudad desde donde se realiza la peticion
      */
     public String extractCountry(HttpServletRequest request) {
@@ -30,7 +30,7 @@ public class ExtractInfo {
 
     /**
      * Extract @param request's browser.
-     * @param HttpServletRequest request del usuario
+     * @param request: HttpServletRequest request del usuario.
      * @return String, devuelve el navegador desde donde se realiza la peticion
      */
     public String extractBrowser(HttpServletRequest request) {
@@ -60,7 +60,7 @@ public class ExtractInfo {
     }
     /**
      * Extract @param request's operative system.
-     * @param HttpServletRequest request del usuario
+     * @param request: HttpServletRequest request del usuario.
      * @return String, devuelve la sistema operativo desde donde se realiza la peticion
      */
     public String extractOS(HttpServletRequest request) {
@@ -106,14 +106,14 @@ public class ExtractInfo {
 
     /**
      * Extract @param request's referer.
-     * @param HttpServletRequest request del usuario
+     * @param request: HttpServletRequest request del usuario.
      * @return String Referencia de la peticion del usuario
      */
     public String extractReferrer(HttpServletRequest request) { return request.getHeader("referer");}
 
     /**
      * Extract all paramenter's of @param request's.
-     * @param HttpServletRequest request
+     * @param request: HttpServletRequest request del usuario.
      * @return String[], donde esta toda la informacion de la peticion
      */
     public String[] extractAll(HttpServletRequest request) {

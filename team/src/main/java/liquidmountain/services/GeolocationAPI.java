@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 public class GeolocationAPI {
     /**
      * Obtain the city of @param ip
-     * @param String ip, direccion ip
+     * @param ip: String direccion ip
      * @return String, nombre de la ciudad donde se encuentra la direccion ip
      */
     public String getCity(String ip) {

@@ -22,20 +22,20 @@ public class GeoObject {
 
     /**
      * Constructor
-     * @param String status parametro requerido por api externa
-     * @param String country, pais
-     * @param String countryCode, codigo del pais,
-     * @param String region, region del pais
-     * @param String regionName, nombre de la region
-     * @param String city, ciudad
-     * @param String zip, parametro requerido por api externa
-     * @param Float lat, latitud
-     * @param Float lon, longitud
-     * @param String timezone, zona horaria
-     * @param String isp, parametro requerido por api externa
-     * @param String org, parametro requerido por api externa
-     * @param String as, parametro requerido por api externa
-     * @param String query, parametro requerido por api externa
+     * @param status: String parametro requerido por api externa
+     * @param country: String pais
+     * @param countryCode: String codigo del pais,
+     * @param region: String region del pais
+     * @param regionName: String nombre de la region
+     * @param city: String ciudad
+     * @param zip: String parametro requerido por api externa
+     * @param lat: Float latitud
+     * @param lon: Float longitud
+     * @param timezone: String zona horaria
+     * @param isp: String parametro requerido por api externa
+     * @param org: String parametro requerido por api externa
+     * @param as: String parametro requerido por api externa
+     * @param query: String parametro requerido por api externa
      */
     public GeoObject(String status, String country, String countryCode, String region, String regionName, String city, String zip, float lat, float lon, String timezone, String isp, String org, String as, String query) {
         this.status = status;

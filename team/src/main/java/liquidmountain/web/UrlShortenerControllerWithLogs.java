@@ -20,8 +20,8 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 
     /**
      * Endpoint que permite la redireccion a la pagina indicada por @param id
-     * @param id, identificador de la uri
-     * @param HttpServletRequest request del usuario
+     * @param id: String identificador de la uri
+     * @param request HttpServletRequestdel usuario
      * @return ResponseEntity
      */
     @Override
@@ -33,11 +33,11 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
     /**
      * Endopoint que permite acortar la direccion de @param url, s
      * se puede incluir la fecha y el momento que cadeque.
-     * @param String url, que se quiere acortar
-     * @param String date, fecha que caduca
-     * @param String time, hora que caduca
-     * @param String sponsor
-     * @param HttpServletRequest request del usuario
+     * @param url: String que se quiere acortar
+     * @param date: String fecha que caduca
+     * @param time: String hora que caduca
+     * @param sponsor: String
+     * @param request: HttpServletRequest request del usuario
      * @return ResponseEntity
      */
     @Override
@@ -53,8 +53,8 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
     /**
      * Endpoint que verifica si la url aportada @param url esta bien formada
      * y es válida.
-     * @param tring url que se quiere comprobar
-     * @param HttpServletRequest request del usuario
+     * @param url: String que se quiere comprobar
+     * @param request: HttpServletRequest request del usuario
      * @return ResponseEntity
      */
     @Override
@@ -65,8 +65,8 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 
     /**
      * Endpoint que valida si la url @param url es segura.
-     * @param String url que se quiere comprobar
-     * @param HttpServletRequest request del usuario
+     * @param url: String que se quiere comprobar
+     * @param request: HttpServletRequest request del usuario
      * @return ResponseEntity
      */
     @Override
