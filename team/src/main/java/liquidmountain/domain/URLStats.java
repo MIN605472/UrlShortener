@@ -11,6 +11,7 @@ public class URLStats {
     public List<DataStat> browsers;
     public List<DataStat> platforms;
     public long numOfClickFromQr;
+    public long numOfClicksTotal;
 
     /**
      * Constructor

@@ -46,6 +46,7 @@ public class StatsController {
         //List<List<DataStat>> urlStats; // 0 = countries, 1 = browsers, 2 = platforms
         URLStats urlStats = new URLStats();
         urlStats.numOfClickFromQr = clickRepository.countFromQr(id);
+        urlStats.numOfClicksTotal = clickRepository.clicksByHash(id);
         int countryCursor = 0;
         int browserCursor = 0;
         int platformCursor = 0;

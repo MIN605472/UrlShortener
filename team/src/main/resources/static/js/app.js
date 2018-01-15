@@ -391,6 +391,34 @@ $(document).ready(() => {
     }
 
     /**
+     * Sets the data for the Platform chart
+     * @param data: Array containing the necessary data formatted correctly for ChartJS
+     */
+    function setAccessData(data) {
+        let accessChartJS = document.getElementById("accessChartJS");
+        let accessChart = new Chart(accessChartJS, {
+            type: 'doughnut',
+            data: data,
+            options: {
+                title: {
+                    display: true,
+                    position: 'top',
+                    text: 'Access'
+                },
+                legend: {
+                    display: false
+                },
+                responsive: true,
+                maintainAspectRatio: true,
+                animation: {
+                    animateRotate: true,
+                    animateScale: true
+                }
+            }
+        });
+    }
+
+    /**
      * Handles the show stats event.
      * Handles the petition and displays the stat charts.
      * If something goes wrong, displays error.
@@ -431,6 +459,17 @@ $(document).ready(() => {
                   // These labels appear in the legend and in the tooltips when hovering different arcs
                   labels: []
               };
+
+              let accessData = {
+                  datasets: [{
+                      backgroundColor: 'rgba(255,255,103,0.4)',
+                      borderColor: "rgba(255,255,103,1)",
+                      data: [msg.numOfClickFromQr, msg.numOfClicksTotal - msg.numOfClickFromQr]
+                  }],
+                  // These labels appear in the legend and in the tooltips when hovering different arcs
+                  labels: ['QR', 'URI']
+              };
+
               msg.countries.forEach((country) => {
                       countryData.datasets[0].data.push(country.users);
                       countryData.labels.push(country.data);
@@ -456,15 +495,20 @@ $(document).ready(() => {
                             <div class="chart-container col-lg-12">
                                 <canvas id="platformChartJS"></canvas>
                             </div>
+                            <div class="chart-container col-lg-12">
+                                <canvas id="accessChartJS"></canvas>
+                            </div>
                         </div>
                     </div>`);
 
               console.log(countryData);
               console.log(browserData);
               console.log(platformData);
+              console.log(accessData);
               setCountryData(countryData);
               setBrowserData(browserData);
               setPlatformData(platformData);
+              setAccessData(accessData);
           },
           error() {
               $('#result').html("<div class='alert alert-danger lead'>ERROR</div>");
