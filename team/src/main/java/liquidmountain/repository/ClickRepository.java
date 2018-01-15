@@ -60,4 +60,6 @@ public interface ClickRepository {
 	 * @return
 	 */
 	List<Click> list(Long limit, Long offset);
+
+	Long countFromQr(String hash);
 }

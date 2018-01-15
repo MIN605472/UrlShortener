@@ -1,82 +1,186 @@
-// TODO: move the QR stuff to his own module
-let numberOfQrsGenerated = 0;
-const qrCardTemplate = qrNumber => `
-    <div class="row">
-      <div class="col-md-6 offset-md-3">
-        <div class="card">
-          <div class="row">
-            <div class="col-md-6">
-              <img id="qr-img-${qrNumber}" src="images/default-placeholder.png" class="img-fluid"
-                   alt="Generated QR">
-            </div>
-            <div class="col-md-5 align-self-center">
-              <form id="qr-generator-${qrNumber}">
-                <div class="form-group row">
-                  <label for="qr-foreground-color-${qrNumber}" class="col-md-6 col-form-label">Foreground</label>
-                  <div class="col-md-6">
-                    <input type="color" class="form-control" id="qr-foreground-color-${qrNumber}" value="#000000">
+const shortUrl = {
+  name: '',
+};
+
+const qrs = {
+  qrCardTemplate() {
+    return `
+      <div class="row">
+        <div class="col-md-6 offset-md-3">
+          <div class="card">
+            <div class="row">
+              <div class="col-md-6">
+                <img id="qr-img-${this.numOfQrsGenerated}" src="images/default-placeholder.png" class="img-fluid"
+                     alt="Generated QR">
+              </div>
+              <div class="col-md-5 align-self-center">
+                <form id="qr-generator-${this.numOfQrsGenerated}">
+                  <div class="form-group row">
+                    <label for="qr-foreground-color-${this.numOfQrsGenerated}" class="col-md-6 col-form-label">Foreground</label>
+                    <div class="col-md-6">
+                      <input type="color" class="form-control" id="qr-foreground-color-${this.numOfQrsGenerated}" value="#000000">
+                    </div>
                   </div>
-                </div>
-                <div class="form-group row">
-                  <label for="qr-background-color-${qrNumber}" class="col-md-6 col-form-label">Background</label>
-                  <div class="col-md-6">
-                    <input type="color" class="form-control" id="qr-background-color-${qrNumber}" value="#ffffff">
+                  <div class="form-group row">
+                    <label for="qr-background-color-${this.numOfQrsGenerated}" class="col-md-6 col-form-label">Background</label>
+                    <div class="col-md-6">
+                      <input type="color" class="form-control" id="qr-background-color-${this.numOfQrsGenerated}" value="#ffffff">
+                    </div>
                   </div>
-                </div>
-                <div class="form-group row">
-                  <label for="qr-logo-${qrNumber}" class="col-md-6 col-form-label">Logo</label>
-                  <div class="col-md-6">
-                    <input type="file" class="form-control" id="qr-logo-${qrNumber}">
-                    <input type="hidden" id="qr-logo-file-${qrNumber}" value="">
+                  <div class="form-group row">
+                    <label for="qr-logo-${this.numOfQrsGenerated}" class="col-md-6 col-form-label">Logo</label>
+                    <div class="col-md-6">
+                      <input type="file" class="form-control" id="qr-logo-${this.numOfQrsGenerated}">
+                    </div>
                   </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6 offset-md-3">
-                    <button type="submit" class="btn btn-primary">Generate</button>
+                  <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                      <button type="submit" class="btn btn-primary">Generate</button>
+                    </div>
                   </div>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <br>`;
-
-function qrGeneratorHandler(qrNumber) {
-  return (ev) => {
-    ev.preventDefault();
-    const params = {
-      url: $("input[name='url']").val(),
-      fg: $(`#qr-foreground-color-${qrNumber}`).val(),
-      bg: $(`#qr-background-color-${qrNumber}`).val(),
-      id: $(`#qr-logo-file-${qrNumber}`).val() || null
-    };
-    const strParams = jQuery.param(params);
-    const url = `http://localhost:8080/api/qrs?${strParams}`;
-    $(`#qr-img-${qrNumber}`).attr('src', url);
-  };
-}
-
-
-function logoChangeHandler(qrNumber) {
-  return (ev) => {
-    ev.preventDefault();
-    const formData = new FormData();
-    formData.append('logoImg', ev.target.files[0]);
-    $.ajax({
-      url: 'http://localhost:8080/api/logos',
-      method: 'POST',
-      contentType: false,
-      data: formData,
-      dataType: 'json',
-      processData: false,
-      success(msg) {
-        $(`#qr-logo-file-${qrNumber}`).val(msg.id);
+      <br>
+    `;
+  },
+  qrAdderTemplate() {
+    return `
+       <div class="row" id="qr-adder">
+        <div class="col-md-6 offset-md-3">
+          <div class="qr-adder-card">
+            <button type="button" class="btn btn-link" id="generate-new-qr" style="opacity: 1">Generate a new QR</button>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+  qrCardHandlers: {
+    onSubmit(qrNumber) {
+      return function (ev) {
+        ev.preventDefault();
+        const formData = new FormData();
+        if (qrs.qrCards[qrNumber].bg) {
+          formData.append('bg', $(`#qr-background-color-${qrNumber}`).val());
+        }
+        if (qrs.qrCards[qrNumber].fg) {
+          formData.append('fg', $(`#qr-foreground-color-${qrNumber}`).val());
+        }
+        if (qrs.qrCards[qrNumber].logo) {
+          formData.append('logoImg', $(`#qr-logo-${qrNumber}`)[0].files[0]);
+        }
+        $.ajax({
+          url: `http://localhost:8080/api/urls/${shortUrl.name}/qrs/${qrNumber}`,
+          method: 'PATCH',
+          contentType: false,
+          data: formData,
+          processData: false,
+          success() {
+            $(`#qr-img-${qrNumber}`).attr('src', `http://localhost:8080/api/urls/${shortUrl.name}/qrs/${qrNumber}?${new Date().getTime()}`);
+          },
+        });
+      };
+    },
+    onLogoChange(qrNumber) {
+      return function (ev) {
+        ev.preventDefault();
+        qrs.qrCards[qrNumber].logo = true;
+      };
+    },
+    onFgColorChange(qrNumber) {
+      return function (ev) {
+        ev.preventDefault();
+        qrs.qrCards[qrNumber].fg = true;
+      };
+    },
+    onBgColorChange(qrNumber) {
+      return function (ev) {
+        ev.preventDefault();
+        qrs.qrCards[qrNumber].bg = true;
+      };
+    },
+  },
+  qrCards: [],
+  numOfQrsGenerated: 0,
+  maxNumOfQrs: 3,
+  currentState: 'empty',
+  states: {
+    empty: {
+      newShortUrl() {
+        this.changeStateTo('canAdd');
+        $('#qrs').append(this.qrAdderTemplate());
+        $('#generate-new-qr').click(() => this.dispatch('addQr'));
       },
-    });
-  };
-}
+    },
+    canAdd: {
+      addQr() {
+        $('#qr-adder').before(this.qrCardTemplate());
+        this.qrCards.push({
+          fg: false,
+          bg: false,
+          logo: false,
+        });
+        $(`#qr-generator-${this.numOfQrsGenerated}`).submit(this.qrCardHandlers.onSubmit(this.numOfQrsGenerated));
+        $(`#qr-logo-${this.numOfQrsGenerated}`).change(this.qrCardHandlers.onLogoChange(this.numOfQrsGenerated));
+        $(`#qr-foreground-color-${this.numOfQrsGenerated}`).change(this.qrCardHandlers.onFgColorChange(this.numOfQrsGenerated));
+        $(`#qr-background-color-${this.numOfQrsGenerated}`).change(this.qrCardHandlers.onBgColorChange(this.numOfQrsGenerated));
+        const formData = new FormData();
+        formData.append('fg', '#000000');
+        formData.append('bg', '#FFFFFF');
+        const ajaxOnSuccess = num => jqXHR => $(`#qr-img-${num}`).attr('src', jqXHR.getResponseHeader('Location'));
+        const myOnSuccess = ajaxOnSuccess(this.numOfQrsGenerated);
+        $.ajax({
+          url: `http://localhost:8080/api/urls/${shortUrl.name}/qrs`,
+          method: 'POST',
+          contentType: false,
+          data: formData,
+          processData: false,
+          success(data, textStatus, jqXHR) {
+            myOnSuccess(jqXHR);
+          },
+        });
+        this.numOfQrsGenerated += 1;
+        if (this.numOfQrsGenerated >= this.maxNumOfQrs) {
+          $('#qr-adder').remove();
+          this.changeStateTo('full');
+        }
+      },
+      newShortUrl() {
+        this.changeStateTo('canAdd');
+        this.numOfQrsGenerated = 0;
+        this.qrCards = [];
+        $('#qrs').empty();
+        $('#qrs').append(this.qrAdderTemplate());
+        $('#generate-new-qr').click(() => this.dispatch('addQr'));
+      },
+    },
+    full: {
+      removeQr() {
+        this.changeStateTo('canAdd');
+      },
+      newShortUrl() {
+        this.changeStateTo('canAdd');
+        this.numOfQrsGenerated = 0;
+        this.qrCards = [];
+        $('#qrs').empty();
+        $('#qrs').append(this.qrAdderTemplate());
+        $('#generate-new-qr').click(() => this.dispatch('addQr'));
+      },
+    },
+  },
+  dispatch(actionName, ...payload) {
+    const action = this.states[this.currentState][actionName];
+    if (action) {
+      action.apply(qrs, ...payload);
+    }
+  },
+  changeStateTo(newState) {
+    this.currentState = newState;
+  },
+};
 
 /**
  * Stop spinners from spinning. Because fuck 2017.
@@ -108,6 +212,8 @@ $(document).ready(() => {
      * If everything goes fine, returns the shortened url.
      */
   $('#shortener').submit((event) => {
+    isSafe = false;
+    isVerified = false;
     modal.style.display = "block";
     event.preventDefault();
       $.ajax({
@@ -144,6 +250,8 @@ $(document).ready(() => {
                                       $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></br><p>The link will expire ${msg.expirationDate} at ${msg.expirationTime}</p></div>`);
                                   }
                                   else $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></div>`);
+                                  shortUrl.name = msg.uri.substr(msg.uri.lastIndexOf('/') + 1);
+                                  qrs.dispatch('newShortUrl');
                               },
                               error() {
                                   setSpinners();
@@ -185,17 +293,8 @@ $(document).ready(() => {
 
   });
 
-    $('#generate-new-qr').click(() => {
-    $('#qr-adder').before(qrCardTemplate(numberOfQrsGenerated));
-    $(`#qr-generator-${numberOfQrsGenerated}`).submit(qrGeneratorHandler(numberOfQrsGenerated));
-    $(`#qr-logo-${numberOfQrsGenerated}`).change(logoChangeHandler(numberOfQrsGenerated));
-    numberOfQrsGenerated += 1;
-    if (numberOfQrsGenerated > 2) {
-      $('#qr-adder').remove();
-    }
-    });
 
-    $('#goBackButton').click(() => {
+  $('#goBackButton').click(() => {
       window.location = "index.html"
     });
 

@@ -16,6 +16,7 @@ public class Click {
 	private String platform;
 	private String ip;
 	private String country;
+	private boolean comesFromQr;
 
 	/**
 	 * Constructor
@@ -29,7 +30,7 @@ public class Click {
 	 * @param country: String ciudad donde se genero el click
 	 */
 	public Click(Long id, String hash, Date created, String referrer,
-			String browser, String platform, String ip, String country) {
+			String browser, String platform, String ip, String country, boolean comesFromQr) {
 		this.id = id;
 		this.hash = hash;
 		this.created = created;
@@ -38,6 +39,7 @@ public class Click {
 		this.platform = platform;
 		this.ip = ip;
 		this.country = country;
+		this.comesFromQr = comesFromQr;
 	}
 
 	public Long getId() {
@@ -70,5 +72,13 @@ public class Click {
 
 	public String getCountry() {
 		return country;
+	}
+
+	public boolean isComesFromQr() {
+		return comesFromQr;
+	}
+
+	public void setComesFromQr(boolean comesFromQr) {
+		this.comesFromQr = comesFromQr;
 	}
 }

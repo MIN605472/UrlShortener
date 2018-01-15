@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.sql.Time;
@@ -58,9 +59,10 @@ public class UrlShortenerController {
 	 */
     @ApiOperation(value ="Redirect")
     @RequestMapping(value = "/{id:[a-zA-Z0-9]+(?!\\.html)}", method = RequestMethod.GET)
-	public ResponseEntity<?> redirectTo(@PathVariable String id,
-										HttpServletRequest request) {
-		ShortURL l = shortURLRepository.findByKey(id);
+    public ResponseEntity<?> redirectTo(@PathVariable String id, HttpServletRequest request,
+                                        @RequestParam(value = "qr", required = false, defaultValue = "false") boolean
+                                                comesFromQr) {
+        ShortURL l = shortURLRepository.findByKey(id);
 		if(l != null){
 			// Construct date and time objects
 			Calendar dateCal = Calendar.getInstance();
@@ -81,7 +83,7 @@ public class UrlShortenerController {
 
 			if (now.isBefore(then)) {
 				ExtractInfo ex = new ExtractInfo();
-				createAndSaveClick(id, ex.extractAll(request));
+				createAndSaveClick(id, ex.extractAll(request), comesFromQr);
 				return createSuccessfulRedirectToResponse(l);
 			} else {
 				LOG.info("Requested link has expired. Returning " + HttpStatus.GONE);
@@ -106,9 +108,9 @@ public class UrlShortenerController {
 	 *            3: OS
 	 *            4: referrer
 	 */
-	private void createAndSaveClick(String hash, String[] info) {
+	private void createAndSaveClick(String hash, String[] info, boolean comesFromQr) {
 		Click cl = new Click(null, hash, new Date(System.currentTimeMillis()),
-				info[4], info[0], info[3], info[2], info[1]);
+				info[4], info[0], info[3], info[2], info[1], comesFromQr);
 		cl=clickRepository.save(cl);
 		System.out.println(info[0] + " " + info[3] + " " + info[1]);
 		LOG.info(cl!=null?"["+hash+"] saved with id ["+cl.getId()+"]":"["+hash+"] was not saved");
@@ -228,12 +230,14 @@ public class UrlShortenerController {
 //					.hashString(url, StandardCharsets.UTF_8).toString();
 			String id = Hashing.murmur3_32()
 					.hashString(uuid.toString(), StandardCharsets.UTF_8).toString();
-			ShortURL su = new ShortURL(id, url,
-					linkTo(
-							methodOn(UrlShortenerController.class).redirectTo(
-									id, null)).toUri(), sponsor, new Date(
-					System.currentTimeMillis()), owner,
-					HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null, expirationDate, expirationTime);
+			ShortURL su = null;
+			try {
+				su = new ShortURL(id, url, new URI("http://localhost:8080/" + id), sponsor, new Date(
+                        System.currentTimeMillis()), owner,
+                        HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null, expirationDate, expirationTime);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
 			ShortURL old = shortURLRepository.findByKey(su.getHash());
 			if(old != null){
 				shortURLRepository.update(su);

@@ -9,12 +9,13 @@
   height: 250px;
   max-height: 250px;
   border-radius: .25rem;
-  border: 2px dashed rgba(0, 0, 0, 0.125);
   display: flex;
   align-items: center;
-  justify-content: center; }
+  justify-content: center;
+  border: 2px dashed rgba(0, 0, 0, 0.125);
+  background-color:rgba(255, 255, 255, 0.5);
+}
 
-/*# sourceMappingURL=style.css.map */
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */

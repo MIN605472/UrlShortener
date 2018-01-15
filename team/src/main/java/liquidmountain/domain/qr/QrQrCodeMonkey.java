@@ -1,32 +1,69 @@
-package liquidmountain.domain.qr.qrcodemonkey;
+package liquidmountain.domain.qr;
 
-import liquidmountain.domain.qr.Color;
-import liquidmountain.domain.qr.Image;
-import liquidmountain.domain.qr.QrGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-public class QrQrCodeMonkey implements QrGenerator {
+public class QrQrCodeMonkey extends QrGenerator {
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(QrQrCodeMonkey.class);
     private static final String QR_URI = "https://qr-generator.qrcode.studio/qr/custom";
+    private static final String LOGO_URI = "https://qr-generator.qrcode.studio/qr/uploadImage";
+    private static final String FORM_NAME = "file";
 
-    private String logoId;
-    private String shortUrl;
-    private Color foregroundColor;
-    private Color backgroundColor;
+    private LogoId logoId;
 
-    public QrQrCodeMonkey(String logoId, String shortUrl, Color foregroundColor, Color backgroundColor) {
-        this.logoId = logoId;
-        this.shortUrl = shortUrl;
-        this.foregroundColor = foregroundColor;
-        this.backgroundColor = backgroundColor;
+    public QrQrCodeMonkey(String data, Color fg, Color bg, Image logoImg) {
+        super(data, fg, bg, logoImg);
+    }
+
+    private String hashToUrl(String data) {
+        return "http://localhost:8080/" + data + "?qr=1";
+    }
+
+    private LogoId genId() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.postForEntity(LOGO_URI, new HttpEntity<>(buildParts(), headers),
+                String.class);
+        LogoIdDto logoIdDto;
+        try {
+            logoIdDto = new ObjectMapper().readValue(response.getBody(), LogoIdDto.class);
+        } catch (IOException e) {
+            LOGGER.error("When parsing a JSON string", e);
+            throw new RuntimeException();
+        }
+        return new LogoId(logoIdDto.getFile());
+    }
+
+    private String genFilename() {
+        return "whatever." + logoImg.getMediaType().getSubtype();
+    }
+
+    private MultiValueMap<String, Object> buildParts() {
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        HttpHeaders imgPartHeaders = new HttpHeaders();
+        imgPartHeaders.setContentType(logoImg.getMediaType());
+        imgPartHeaders.setContentDispositionFormData(FORM_NAME, genFilename());
+        parameters.add(FORM_NAME, new HttpEntity<>(new InputStreamResource(logoImg.getInputStream()), imgPartHeaders));
+        return parameters;
     }
 
     @Override
     public Image gen() {
+        if (logoImg != null && logoId == null) {
+            logoId = genId();
+        }
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -36,18 +73,18 @@ public class QrQrCodeMonkey implements QrGenerator {
 
     private QrInfoDto toQrInfoDto() {
         QrConfigDto qrConfigDto = new QrConfigDto();
-        qrConfigDto.setBodyColor(foregroundColor.getHexColor());
-        qrConfigDto.setBgColor(backgroundColor.getHexColor());
-        qrConfigDto.setEye1Color(foregroundColor.getHexColor());
-        qrConfigDto.setEye2Color(foregroundColor.getHexColor());
-        qrConfigDto.setEye3Color(foregroundColor.getHexColor());
-        qrConfigDto.setEyeBall1Color(foregroundColor.getHexColor());
-        qrConfigDto.setEyeBall2Color(foregroundColor.getHexColor());
-        qrConfigDto.setEyeBall3Color(foregroundColor.getHexColor());
-        qrConfigDto.setLogo(logoId);
+        qrConfigDto.setBodyColor(fg.getHexColor());
+        qrConfigDto.setBgColor(bg.getHexColor());
+        qrConfigDto.setEye1Color(fg.getHexColor());
+        qrConfigDto.setEye2Color(fg.getHexColor());
+        qrConfigDto.setEye3Color(fg.getHexColor());
+        qrConfigDto.setEyeBall1Color(fg.getHexColor());
+        qrConfigDto.setEyeBall2Color(fg.getHexColor());
+        qrConfigDto.setEyeBall3Color(fg.getHexColor());
+        qrConfigDto.setLogo(logoId == null ? null : logoId.getId());
         QrInfoDto qrInfoDto = new QrInfoDto();
-        qrInfoDto.setData(shortUrl);
-        qrInfoDto.setSize(300);
+        qrInfoDto.setData(hashToUrl(data));
+        qrInfoDto.setSize(250);
         qrInfoDto.setFile("png");
         qrInfoDto.setConfig(qrConfigDto);
         return qrInfoDto;
@@ -173,6 +210,18 @@ public class QrQrCodeMonkey implements QrGenerator {
 
         public void setLogo(String logo) {
             this.logo = logo;
+        }
+    }
+
+    private static class LogoIdDto {
+        private String file;
+
+        public String getFile() {
+            return file;
+        }
+
+        public void setFile(String file) {
+            this.file = file;
         }
     }
 }
