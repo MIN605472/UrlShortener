@@ -10,6 +10,7 @@ public class URLStats {
     public List<DataStat> countries;
     public List<DataStat> browsers;
     public List<DataStat> platforms;
+    public long numOfClickFromQr;
 
     /**
      * Constructor

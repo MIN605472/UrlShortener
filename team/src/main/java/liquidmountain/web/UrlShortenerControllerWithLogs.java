@@ -25,9 +25,10 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
      * @return ResponseEntity
      */
     @Override
-    public ResponseEntity<?> redirectTo(@PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<?> redirectTo(@PathVariable String id, HttpServletRequest request, @RequestParam(value =
+            "qr", required = false, defaultValue = "false") boolean comesFromQr) {
         logger.info("Requested redirection with hash " + id);
-        return super.redirectTo(id, request);
+        return super.redirectTo(id, request, comesFromQr);
     }
 
     /**
