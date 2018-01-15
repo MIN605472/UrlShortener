@@ -28,6 +28,10 @@ public class QrRepositoryImpl implements QrRepository {
     @Autowired
     protected JdbcTemplate jdbc;
 
+    public QrRepositoryImpl(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
+    }
+
     @Override
     public int saveQr(QrGenerator qr) {
         try {
@@ -117,11 +121,6 @@ public class QrRepositoryImpl implements QrRepository {
             LOGGER.error("When retrieving the QR", e);
             throw e;
         }
-    }
-
-    @Override
-    public List<Integer> retrieveQrs(String shortUrl) {
-        return null;
     }
 
     private static class Pair {

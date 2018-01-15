@@ -11,5 +11,4 @@ public interface QrRepository {
 
     QrGenerator retrieveQr(String shortUrl, int qrId);
 
-    List<Integer> retrieveQrs(String shortUrl);
 }

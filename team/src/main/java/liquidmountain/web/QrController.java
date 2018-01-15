@@ -1,9 +1,6 @@
 package liquidmountain.web;
 
-import liquidmountain.domain.qr.Color;
-import liquidmountain.domain.qr.Image;
-import liquidmountain.domain.qr.QrGenerator;
-import liquidmountain.domain.qr.QrQrCodeMonkey;
+import liquidmountain.domain.qr.*;
 import liquidmountain.repository.QrRepository;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -53,7 +50,7 @@ public class QrController {
     public ResponseEntity<byte[]> getQr(@PathVariable String urlHash, @PathVariable int qrId) {
         try {
             QrGenerator qrGenerator = qrRepository.retrieveQr(urlHash, qrId);
-            Image qrImg = qrGenerator.gen();
+            Image qrImg = new QrCommand(qrGenerator).run();
             byte[] qrImgRawBytes = IOUtils.toByteArray(qrImg.getInputStream());
             qrImg.close();
             HttpHeaders headers = new HttpHeaders();
@@ -63,11 +60,6 @@ public class QrController {
             LOGGER.error("When getting a QR", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    @GetMapping(value = "/api/urls/{urlHash:[a-zA-Z0-9]+}/qrs")
-    public ResponseEntity<byte[]> getAllQrs(@PathVariable String urlHash) {
-        return null;
     }
 
     @PatchMapping(value = "/api/urls/{urlHash:[a-zA-Z0-9]+}/qrs/{qrId:[0-9]+}", consumes = MediaType
